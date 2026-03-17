@@ -26,13 +26,16 @@ export class CarritoService {
 
   quitar(idCarrito: string | null) {
     this._productos.update(lista => {
-      const productoAQuitar = lista.find(p => p.idCarrito === idCarrito);
-    
-      if (productoAQuitar) {
-        productoAQuitar.enStock++;
-      }
+    const index = lista.findIndex(p => p.idCarrito === idCarrito);
+    if (index !== -1) {
+      lista[index].enStock++;
+      const nuevaLista = [...lista];
+      nuevaLista.splice(index, 1);
+      
+      return nuevaLista;
+    }
 
-      return lista.filter(p => p.idCarrito !== idCarrito);
+    return lista;
     });
     
   }
