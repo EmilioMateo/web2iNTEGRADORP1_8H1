@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inventory>
+  <product id="1">
+    <name>Audífonos Pro</name>
+    <price>1200</price>
+    <description>Cancelación de ruido activa y diseño ergonómico.</description>
+    <category>Audio</category>
+    <image>audifonos.png</image> 
+  </product>
+
+  <product id="2">
+    <name>Teclado Mecánico</name>
+    <price>850</price>
+    <description>RGB personalizable y switches red silenciosos.</description>
+    <category>Accesorios</category>
+    <image>teclado.png</image>
+  </product>
+</inventory>
