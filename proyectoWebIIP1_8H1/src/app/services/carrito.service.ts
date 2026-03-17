@@ -5,6 +5,8 @@ import { Producto } from '../models/producto.model';
 export class CarritoService {
 
   private _productos = signal<Producto[]>([]);
+  private _notificacion = signal<boolean>(false);
+  notificacion = this._notificacion.asReadonly();
 
   productos = this._productos.asReadonly();
   
@@ -20,6 +22,9 @@ export class CarritoService {
     };
 
     this._productos.update(lista => [...lista, productoCarrito]);
+
+    this._notificacion.set(true);
+    setTimeout(() => this._notificacion.set(false), 1000);
   }
 
   quitar(idCarrito: string | null) {

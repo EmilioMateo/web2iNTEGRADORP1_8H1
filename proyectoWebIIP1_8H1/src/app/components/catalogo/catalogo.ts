@@ -9,21 +9,24 @@ import { CarritoComponent } from '../../carrito/carrito.component';
   standalone: true,
   imports: [AsyncPipe, ProductoCard, CarritoComponent],
   template: `
-    <header style="margin-bottom: 20px;">
+    <header class="main-header">
       <h1>Catálogo de Productos</h1>
+      <app-carrito />
     </header>
 
     <section class="contenedor-grid">
       @for (prod of (productos$ | async); track prod.id) {
         <app-producto-card [item]="prod" />
-      } @empty {
-        <p>Cargando productos o catálogo vacío...</p>
       }
     </section>
-
-    <app-carrito />
   `,
   styles: [`
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
     .contenedor-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
