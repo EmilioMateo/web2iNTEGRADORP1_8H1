@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { ProductoService } from '../../services/producto.service';
 import { ProductoCard } from '../producto/producto-card';
-import { CarritoComponent } from '../../carrito/carrito.component'; 
+import { CarritoComponent } from '../../carrito/carrito.component';
 
 @Component({
   selector: 'app-catalogo',
@@ -23,15 +23,20 @@ import { CarritoComponent } from '../../carrito/carrito.component';
   styles: [`
     .main-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      gap: 20px;
       align-items: center;
       padding: 1rem 2rem;
+      font-family: 'Roboto', sans-serif; 
+      font-size: 20px;
+      color: white;
     }
     .contenedor-grid {
+      min-height: 100vh;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, 250px);
+      justify-content: center;
       gap: 20px;
-      padding: 10px;
     }
   `]
 })

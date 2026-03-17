@@ -25,16 +25,16 @@ import { CarritoService } from '../../services/carrito.service';
     </article>
   `,
   styles: [`
-    .tarjeta { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; background: #fff; }
+    .tarjeta { border: 5px solid #ffffff; border-radius: 12px; overflow: hidden; background: #b3635991; }
     img { width: 100%; height: 200px; object-fit: cover; }
-    .contenido { padding: 12px; display: grid; gap: 8px; }
-    .cabecera { display: flex; justify-content: space-between; align-items: baseline; }
-    .precio { font-weight: bold; color: #111827; }
-    .meta { color: #6b7280; font-size: 13px; margin: 0; }
-    .desc { font-size: 14px; color: #374151; margin: 0; }
-    .stock { font-size: 13px; font-weight: 600; color: #059669; margin: 0; }
+    .contenido { padding: 12px; display: grid; gap: 8px; font-family: 'Roboto', sans-serif;  }
+    .cabecera { display: flex; justify-content: space-between; align-items: baseline; color: white;}
+    .precio { font-family: 'Roboto', sans-serif; font-weight: bold; color: #ffffff; }
+    .meta { color: #ffffff; font-size: 13px; margin: 0; font-family: 'Roboto', sans-serif; }
+    .desc { font-size: 14px; font-family: 'Roboto', sans-serif; color: #ffffff; margin: 0; }
+    .stock { font-size: 13px; font-weight: 600; color: #01ff4d; margin: 0; font-family: 'Roboto', sans-serif; }
     .agotado { color: #dc2626; }
-    button { background: #7c3aed; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+    button { background: #831111; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
     button:disabled { background: #ccc; cursor: not-allowed; }
   `]
 })
