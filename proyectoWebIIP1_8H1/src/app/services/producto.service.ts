@@ -19,7 +19,7 @@ export class ProductoService {
           descripcion: nodo.querySelector('description')?.textContent || '',
           imagenUrl: nodo.querySelector('image')?.textContent || '',
           categoria: nodo.querySelector('category')?.textContent || '',
-          enStock: true,
+          enStock: Number(nodo.querySelector('stock')?.textContent || 0),
         })) as Producto[];
       })
     );

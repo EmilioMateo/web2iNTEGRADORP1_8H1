@@ -1,18 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inventory>
   <product id="1">
-    <name>Audífonos Pro</name>
-    <price>1200</price>
-    <description>Cancelación de ruido activa y diseño ergonómico.</description>
-    <category>Audio</category>
-    <image>audifonos.png</image> 
+    <name>Mancuerna 10kg</name>
+    <price>450</price>
+    <description>Mancuerna de acero sólido con recubrimiento de caucho para mayor durabilidad.</description>
+    <category>Pesas</category>
+    <image>mancuerna_10kg.jpg</image> 
+    <stock>15</stock>
   </product>
 
   <product id="2">
-    <name>Teclado Mecánico</name>
-    <price>850</price>
-    <description>RGB personalizable y switches red silenciosos.</description>
-    <category>Accesorios</category>
-    <image>teclado.png</image>
+    <name>Máquina Press Banca</name>
+    <price>5200</price>
+    <description>Banco profesional con soportes ajustables y acolchado de alta densidad.</description>
+    <category>Máquinas</category>
+    <image>press_banca.jpg</image>
+    <stock>5</stock>
+  </product>
+
+  <product id="3">
+    <name>Soporte para Fondos</name>
+    <price>1100</price>
+    <description>Barras paralelas robustas para entrenamiento de tríceps y pecho.</description>
+    <category>Calistenia</category>
+    <image>soporte_fondos.jpg</image>
+    <stock>8</stock>
+  </product>
+
+  <product id="4">
+    <name>Soporte para Pull Up</name>
+    <price>950</price>
+    <description>Barra de dominadas para pared con múltiples agarres antideslizantes.</description>
+    <category>Calistenia</category>
+    <image>soporte_pullup.jpg</image>
+    <stock>12</stock>
+  </product>
+
+  <product id="5">
+    <name>Barra de 20kg</name>
+    <price>2800</price>
+    <description>Barra olímpica profesional con acabado en cromo y rodamientos de alta calidad.</description>
+    <category>Pesas</category>
+    <image>barra_20kg.jpg</image>
+    <stock>7</stock>
   </product>
 </inventory>

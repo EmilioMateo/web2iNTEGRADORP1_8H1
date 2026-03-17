@@ -5,6 +5,6 @@ export interface Producto {
   descripcion: string;
   imagenUrl: string;
   categoria: string;
-  enStock: boolean;
+  enStock: number;
   idCarrito: string;
 }

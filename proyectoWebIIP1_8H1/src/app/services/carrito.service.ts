@@ -16,22 +16,29 @@ export class CarritoService {
   );
 
   agregar(producto: Producto) {
-    const productoCarrito = {
-      ...producto,
-      idCarrito: crypto.randomUUID()
-    };
+    (producto as any).idCarrito = crypto.randomUUID();
 
-    this._productos.update(lista => [...lista, productoCarrito]);
+    this._productos.update(lista => [...lista, producto]);
 
     this._notificacion.set(true);
     setTimeout(() => this._notificacion.set(false), 1000);
   }
 
   quitar(idCarrito: string | null) {
-    this._productos.update(lista => lista.filter((p: any) => p.idCarrito !== idCarrito));
+    this._productos.update(lista => {
+      const productoAQuitar = lista.find(p => p.idCarrito === idCarrito);
+    
+      if (productoAQuitar) {
+        productoAQuitar.enStock++;
+      }
+
+      return lista.filter(p => p.idCarrito !== idCarrito);
+    });
+    
   }
 
   vaciar() {
+    this._productos().forEach(p => p.enStock++);
     this._productos.set([]);
   }
 

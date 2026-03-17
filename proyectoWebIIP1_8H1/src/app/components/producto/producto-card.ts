@@ -15,11 +15,12 @@ import { CarritoService } from '../../services/carrito.service';
         </div>
         <p class="meta">{{item.categoria}}</p>
         <p class="desc">{{item.descripcion}}</p>
-        <p [class]="item.enStock ? 'stock' : 'stock agotado'">
-          {{ item.enStock ? 'En stock' : 'Agotado' }}
+       <p [class]="item.enStock > 0 ? 'stock' : 'stock agotado'">
+          {{ item.enStock > 0 ? 'En stock (' + item.enStock + ')' : 'Agotado' }}
         </p>
-        <button (click)="alAgregar()" [disabled]="!item.enStock">
-          {{ item.enStock ? 'Añadir al carrito' : 'No disponible' }}
+
+        <button (click)="alAgregar()" [disabled]="item.enStock <= 0">
+          {{ item.enStock > 0 ? 'Añadir al carrito' : 'No disponible' }}
         </button>
       </div>
     </article>
@@ -43,6 +44,7 @@ export class ProductoCard {
   private carritoService = inject(CarritoService);
 
   alAgregar() {
+    this.item.enStock--;
     this.carritoService.agregar(this.item);
   }
 }

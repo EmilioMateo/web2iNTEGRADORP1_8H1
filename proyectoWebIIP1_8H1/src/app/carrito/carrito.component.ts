@@ -48,8 +48,7 @@ import { CarritoService } from '../services/carrito.service';
       background: #811010; color: white; border: none; padding: 12px;
       border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: all 0.3s;
     }
-
-    /* La animación de brillo que te pidió la profe */
+      
     .glow-animation {
       box-shadow: 0 0 15px 5px rgba(231, 65, 65, 0.8);
       transform: scale(1.1);
