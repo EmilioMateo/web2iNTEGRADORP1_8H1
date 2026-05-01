@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CurrencyPipe, NgClass } from '@angular/common'; 
 import { CarritoService } from '../services/carrito.service';
+import { CheckoutComponent } from '../../../frontend/components/checkout/checkout';
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CurrencyPipe, NgClass],
+  imports: [CurrencyPipe, NgClass, CheckoutComponent],
   template: `
     <div class="carrito-wrapper">
       <button 
@@ -34,6 +35,7 @@ import { CarritoService } from '../services/carrito.service';
               <p><strong>Total: {{ servicio.total() | currency:'MXN' }}</strong></p>
               <button class="btn-xml" (click)="servicio.exportarReciboXML()">XML</button>
               <button class="btn-vaciar" (click)="servicio.vaciar()">Vaciar</button>
+              <app-checkout></app-checkout>
             </div>
           }
         </div>
