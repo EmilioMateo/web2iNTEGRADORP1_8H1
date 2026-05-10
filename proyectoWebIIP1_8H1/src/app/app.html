@@ -339,4 +339,16 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 
+<nav class="top-navbar">
+  <a routerLink="/introduccion" routerLinkActive="active">
+    <span class="icon">🏠</span> Introducción
+  </a>
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+    <span class="icon">🛍️</span> Catálogo
+  </a>
+  <a routerLink="/carrito" routerLinkActive="active">
+    <span class="icon">🛒</span> Carrito
+  </a>
+</nav>
+
 <router-outlet />

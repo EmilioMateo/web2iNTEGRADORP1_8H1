@@ -2,16 +2,14 @@ import { Component, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { ProductoService } from '../../services/producto.service';
 import { ProductoCard } from '../producto/producto-card';
-import { CarritoComponent } from '../../carrito/carrito.component';
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [AsyncPipe, ProductoCard, CarritoComponent],
+  imports: [AsyncPipe, ProductoCard],
   template: `
     <header class="main-header">
       <h1>Catálogo de Productos</h1>
-      <app-carrito />
     </header>
 
     <section class="contenedor-grid">
@@ -34,9 +32,11 @@ import { CarritoComponent } from '../../carrito/carrito.component';
     .contenedor-grid {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: repeat(auto-fit, 250px);
+      grid-template-columns: repeat(auto-fill, 280px);
       justify-content: center;
-      gap: 20px;
+      align-items: start;
+      gap: 30px;
+      padding: 2rem;
     }
   `]
 })

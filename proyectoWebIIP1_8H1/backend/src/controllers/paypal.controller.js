@@ -1,7 +1,8 @@
-//import { createPaypalOrder, capturePaypalOrder } from '../services/paypal.service.js';
 const paypalService = require("../services/paypal.service")
 const createPaypalOrder = paypalService.createPaypalOrder
 const capturePaypalOrder = paypalService.capturePaypalOrder
+const getOrderDetails = paypalService.getOrderDetails
+const db = require('../config/db');
 
 async function createOrder(req, res) {
   try {
@@ -46,6 +47,41 @@ async function captureOrder(req, res) {
     }
 
     const captureData = await capturePaypalOrder(orderId);
+
+    if (captureData.status === 'COMPLETED') {
+      try {
+        // Fetch order details to get items and total
+        const orderDetails = await getOrderDetails(orderId);
+        const purchaseUnit = orderDetails.purchase_units[0];
+        const total = purchaseUnit.amount.value;
+        const items = purchaseUnit.items || [];
+
+        // 1. Log Purchase
+        const insertSql = 'INSERT INTO registro_compras (total, detalles) VALUES (?, ?)';
+        const detalles = JSON.stringify(items);
+        
+        db.query(insertSql, [total, detalles], (err, result) => {
+          if (err) console.error('Error al registrar compra:', err);
+          else console.log('Compra registrada en BD.');
+        });
+
+        // 2. Update Stock
+        items.forEach(item => {
+          const productId = item.sku;
+          const quantity = parseInt(item.quantity);
+          
+          if (productId) {
+            const updateSql = 'UPDATE productos SET enStock = enStock - ? WHERE id = ?';
+            db.query(updateSql, [quantity, productId], (err, result) => {
+              if (err) console.error(`Error al actualizar stock del producto ${productId}:`, err);
+              else console.log(`Stock actualizado para producto ${productId}.`);
+            });
+          }
+        });
+      } catch (err) {
+        console.error('Error al procesar post-captura (stock/registro):', err);
+      }
+    }
 
     res.status(200).json(captureData);
   } catch (error) {

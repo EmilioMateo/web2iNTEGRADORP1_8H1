@@ -59,6 +59,7 @@ async function createPaypalOrder(orderData) {
         items: itemsAgrupados.map(item => ({
           name: item.nombre,
           quantity: String(item.cantidad),  // ✅ era item.enStock
+          sku: String(item.id),
           unit_amount: {
             currency_code: 'MXN',
             value: Number(item.precio).toFixed(2)
@@ -109,8 +110,32 @@ async function capturePaypalOrder(orderId) {
   return data;
 }
 
+async function getOrderDetails(orderId) {
+  const accessToken = await getAccessToken();
+
+  const response = await fetch(
+    `${paypalConfig.baseUrl}/v2/checkout/orders/${orderId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(`Error obteniendo orden PayPal: ${JSON.stringify(data)}`);
+  }
+
+  return data;
+}
+
 module.exports = {
   getAccessToken,
   createPaypalOrder,
-  capturePaypalOrder
+  capturePaypalOrder,
+  getOrderDetails
 }

@@ -45,10 +45,16 @@ export class CarritoService {
     this._productos.set([]);
   }
 
-  exportarReciboXML() {
+  exportarReciboXML(paypalData?: any) {
     const lista = this._productos();
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<recibo>\n`;
     
+    if (paypalData) {
+      xml += `  <id_transaccion>${paypalData.id}</id_transaccion>\n`;
+      xml += `  <estado>${paypalData.status}</estado>\n`;
+      xml += `  <fecha>${new Date().toLocaleString()}</fecha>\n`;
+    }
+
     lista.forEach(p => {
       xml += `  
       <item>    
@@ -64,7 +70,7 @@ export class CarritoService {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'mi_recibo.xml';
+    link.download = `recibo_paypal_${paypalData ? paypalData.id : 'compra'}.xml`;
     link.click();
     URL.revokeObjectURL(url);
   }

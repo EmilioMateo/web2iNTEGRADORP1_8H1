@@ -11,7 +11,39 @@ declare const paypal: any;
   selector: 'app-checkout',
   standalone: true,
   imports: [CurrencyPipe, RouterLink],
-  templateUrl: './checkout.html'
+  templateUrl: './checkout.html',
+  styles: [`
+    .checkout-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      color: white;
+    }
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+    .success {
+      background: rgba(40, 167, 69, 0.2);
+      color: #28a745;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+    .error {
+      background: rgba(220, 53, 69, 0.2);
+      color: #ff4d4d;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .paypal-buttons {
+      margin-top: 10px;
+    }
+  `]
 })
 export class CheckoutComponent implements AfterViewInit {
   @ViewChild('paypalButtonContainer')
@@ -71,6 +103,7 @@ export class CheckoutComponent implements AfterViewInit {
 
           console.log('Pago capturado:', capture);
           this.mensaje = 'Pago realizado correctamente.';
+          this.carritoService.exportarReciboXML(capture);
           this.carritoService.vaciar();
           this.paypalButtonContainer.nativeElement.innerHTML = '';
         } catch (error) {
