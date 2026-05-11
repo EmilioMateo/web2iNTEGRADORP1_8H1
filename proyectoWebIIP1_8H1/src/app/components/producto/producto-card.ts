@@ -1,12 +1,14 @@
 import { Component, Input, inject, signal } from '@angular/core';
 import { Producto } from '../../models/producto.model';
 import { CarritoService } from '../../services/carrito.service';
-import { NgClass, CurrencyPipe } from '@angular/common';
+import { NgClass, CurrencyPipe, CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-producto-card',
   standalone: true,
-  imports: [NgClass, CurrencyPipe],
+  imports: [NgClass, CurrencyPipe, CommonModule, FormsModule],
   template: `
     <article class="tarjeta">
       <div class="img-container">
@@ -30,16 +32,23 @@ import { NgClass, CurrencyPipe } from '@angular/common';
         <button 
           (click)="alAgregar()" 
           [disabled]="item.enStock <= 0"
-          [ngClass]="{'btn-agregado': agregado()}"
+          [ngClass]="{'btn-agregado': agregado(), 'btn-agotado': item.enStock <= 0}"
         >
           @if (agregado()) {
             ¡Agregado! 👍
           } @else if (item.enStock > 0) {
             Añadir al carrito
           } @else {
-            No disponible
+            Ya no hay
           }
         </button>
+
+        @if (authService.user()?.rol === 'trabajador') {
+          <div class="worker-controls">
+            <input type="number" [(ngModel)]="newStock" min="0" placeholder="Stock">
+            <button class="save-btn" (click)="updateStock()" [disabled]="isSavingStock">Guardar</button>
+          </div>
+        }
       </div>
     </article>
   `,
@@ -55,7 +64,8 @@ import { NgClass, CurrencyPipe } from '@angular/common';
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       display: flex;
       flex-direction: column;
-      height: 480px;
+      min-height: 480px;
+      height: auto;
       color: white;
     }
     
@@ -193,18 +203,75 @@ import { NgClass, CurrencyPipe } from '@angular/common';
       background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
       box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
     }
+
+    .btn-agotado {
+      background: #555 !important;
+      color: #999 !important;
+      cursor: not-allowed !important;
+      box-shadow: none !important;
+    }
+
+    .worker-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .worker-controls input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      outline: none;
+    }
+
+    .save-btn {
+      margin-top: 0;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
   `]
 })
 export class ProductoCard {
   @Input({ required: true }) item!: Producto;
   private carritoService = inject(CarritoService);
+  authService = inject(AuthService);
 
   agregado = signal(false);
+  newStock: number = 0;
+  isSavingStock = false;
+
+  ngOnInit() {
+    this.newStock = this.item.enStock;
+  }
 
   alAgregar() {
     this.item.enStock--;
     this.carritoService.agregar(this.item);
     this.agregado.set(true);
     setTimeout(() => this.agregado.set(false), 2000);
+  }
+
+  async updateStock() {
+    this.isSavingStock = true;
+    try {
+      const res = await fetch(`http://localhost:3000/api/producto/${this.item.id}/stock`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enStock: this.newStock })
+      });
+      if (res.ok) {
+        this.item.enStock = this.newStock;
+        alert('Stock actualizado');
+      } else {
+        alert('Error al actualizar stock');
+      }
+    } catch (e) {
+      alert('Error de conexión');
+    } finally {
+      this.isSavingStock = false;
+    }
   }
 }

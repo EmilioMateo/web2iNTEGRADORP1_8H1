@@ -58,7 +58,7 @@ async function createPaypalOrder(orderData) {
         },
         items: itemsAgrupados.map(item => ({
           name: item.nombre,
-          quantity: String(item.cantidad),  // ✅ era item.enStock
+          quantity: String(item.cantidad),
           sku: String(item.id),
           unit_amount: {
             currency_code: 'MXN',
