@@ -43,7 +43,7 @@ import { AuthService } from '../../services/auth.service';
 
     <section class="contenedor-grid">
       @for (prod of (productos$ | async); track prod.id) {
-        <app-producto-card [item]="prod" />
+        <app-producto-card [item]="prod" (productDeleted)="onProductDeleted()" />
       }
     </section>
   `,
@@ -181,5 +181,9 @@ export class Catalogo {
     } finally {
       this.isSaving = false;
     }
+  }
+
+  onProductDeleted() {
+    this.productos$ = this.servicio.obtenerTodos();
   }
 }
