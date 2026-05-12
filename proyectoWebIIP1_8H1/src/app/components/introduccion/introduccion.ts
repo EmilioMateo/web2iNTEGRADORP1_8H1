@@ -5,11 +5,11 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <div class="introduccion-container">
-      <h1>Bienvenido a nuestro Integrador</h1>
-      <p>Esta es la sección de introducción. Aquí puedes encontrar información sobre nuestro proyecto y lo que ofrecemos.</p>
+      <h1>Bienvenido a GymStar</h1>
+      <p>Te ofrecemos productos de alta calidad para tu casa o gimnasio .</p>
       <div class="detalles">
         <h2>Sobre Nosotros</h2>
-        <p>Somos un equipo dedicado a crear las mejores soluciones web.</p>
+        <p>Somos un equipo del grupo de 8H en el CETI Colomos.</p>
       </div>
     </div>
   `,
