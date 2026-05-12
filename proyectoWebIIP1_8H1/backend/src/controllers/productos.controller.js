@@ -36,8 +36,21 @@ const updateStock = (req, res) => {
     });
 };
 
+const deleteProducto = (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM productos WHERE id = ?';
+    db.query(sql, [id], (error, resultados) => {
+        if (error) {
+            console.error(error);
+            return res.status(500).json({error: 'Error al eliminar producto'});
+        }
+        res.json({message: 'Producto eliminado', id});
+    });
+};
+
 module.exports = {
     getProductos,
     createProducto,
-    updateStock
+    updateStock,
+    deleteProducto
 };

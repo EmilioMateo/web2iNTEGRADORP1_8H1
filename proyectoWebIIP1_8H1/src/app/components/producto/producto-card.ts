@@ -1,4 +1,4 @@
-import { Component, Input, inject, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { Producto } from '../../models/producto.model';
 import { CarritoService } from '../../services/carrito.service';
 import { NgClass, CurrencyPipe, CommonModule } from '@angular/common';
@@ -47,6 +47,7 @@ import { FormsModule } from '@angular/forms';
           <div class="worker-controls">
             <input type="number" [(ngModel)]="newStock" min="0" placeholder="Stock">
             <button class="save-btn" (click)="updateStock()" [disabled]="isSavingStock">Guardar</button>
+            <button class="delete-btn" (click)="deleteProduct()" [disabled]="isDeleting">Eliminar</button>
           </div>
         }
       </div>
@@ -232,16 +233,29 @@ import { FormsModule } from '@angular/forms';
       padding: 8px 12px;
       font-size: 14px;
     }
+
+    .delete-btn {
+      margin-top: 0;
+      padding: 8px 12px;
+      font-size: 14px;
+      background: #dc3545;
+    }
+    
+    .delete-btn:hover:not(:disabled) {
+      background: #c82333;
+    }
   `]
 })
 export class ProductoCard {
   @Input({ required: true }) item!: Producto;
+  @Output() productDeleted = new EventEmitter<void>();
   private carritoService = inject(CarritoService);
   authService = inject(AuthService);
 
   agregado = signal(false);
   newStock: number = 0;
   isSavingStock = false;
+  isDeleting = false;
 
   ngOnInit() {
     this.newStock = this.item.enStock;
@@ -272,6 +286,27 @@ export class ProductoCard {
       alert('Error de conexión');
     } finally {
       this.isSavingStock = false;
+    }
+  }
+
+  async deleteProduct() {
+    if (!confirm('¿Estás seguro de que quieres eliminar este producto?')) return;
+    
+    this.isDeleting = true;
+    try {
+      const res = await fetch(`http://localhost:3000/api/producto/${this.item.id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        alert('Producto eliminado');
+        this.productDeleted.emit();
+      } else {
+        alert('Error al eliminar producto');
+      }
+    } catch (e) {
+      alert('Error de conexión');
+    } finally {
+      this.isDeleting = false;
     }
   }
 }
