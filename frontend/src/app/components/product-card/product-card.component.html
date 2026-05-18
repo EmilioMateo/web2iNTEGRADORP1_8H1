@@ -1,0 +1,44 @@
+﻿<article class="tarjeta">
+  <div class="img-container">
+    <img [src]="item.imagenUrl" [alt]="item.nombre" />
+    <span class="categoria-badge">{{ item.categoria }}</span>
+  </div>
+
+  <div class="contenido">
+    <div class="cabecera">
+      <h3>{{ item.nombre }}</h3>
+      <span class="precio">{{ item.precio | currency:'MXN' }}</span>
+    </div>
+
+    <p class="desc">{{ item.descripcion }}</p>
+
+    <p [class]="item.enStock > 0 ? 'stock' : 'stock agotado'">
+      <span class="dot"></span>
+      {{ item.enStock > 0 ? 'En stock (' + item.enStock + ')' : 'Agotado' }}
+    </p>
+
+    <button
+      type="button"
+      (click)="alAgregar()"
+      [disabled]="item.enStock <= 0"
+      [ngClass]="{ 'btn-agregado': agregado(), 'btn-agotado': item.enStock <= 0 }"
+    >
+      @if (agregado()) {
+        Agregado
+      } @else if (item.enStock > 0) {
+        Anadir al carrito
+      } @else {
+        Ya no hay
+      }
+    </button>
+
+    @if (authService.user()?.rol === 'trabajador') {
+      <div class="worker-controls">
+        <input type="number" [(ngModel)]="newStock" min="0" placeholder="Stock">
+        <button type="button" class="save-btn" (click)="updateStock()" [disabled]="isSavingStock">Guardar</button>
+        <button type="button" class="delete-btn" (click)="deleteProduct()" [disabled]="isDeleting">Eliminar</button>
+      </div>
+    }
+  </div>
+</article>
+

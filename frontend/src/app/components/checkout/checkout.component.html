@@ -1,0 +1,14 @@
+﻿<div class="checkout-container">
+  @if (mensaje) {
+    <div
+      class="alert"
+      [class.success]="mensaje.includes('correctamente')"
+      [class.error]="mensaje.includes('error') || mensaje.includes('cancelo') || mensaje.includes('No se cargo')"
+    >
+      {{ mensaje }}
+    </div>
+  }
+
+  <div #paypalButtonContainer class="paypal-buttons"></div>
+</div>
+

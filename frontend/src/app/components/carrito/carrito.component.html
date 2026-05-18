@@ -1,0 +1,42 @@
+﻿<div class="carrito-pagina">
+  <h1>Tu Carrito de Compras</h1>
+
+  @if (carritoService.productos().length === 0) {
+    <div class="vacio-mensaje">
+      <p>Tu carrito esta vacio. Agrega algunos productos.</p>
+      <a routerLink="/" class="btn-seguir">Ver Catalogo</a>
+    </div>
+  } @else {
+    <div class="contenido-carrito">
+      <div class="items-lista">
+        @for (p of carritoService.productos(); track p.idCarrito) {
+          <div class="item">
+            <div class="item-info">
+              <span class="nombre">{{ p.nombre }}</span>
+              <span class="precio">{{ p.precio | currency:'MXN' }}</span>
+            </div>
+            <button class="btn-quitar" type="button" (click)="carritoService.quitar(p.idCarrito)">X</button>
+          </div>
+        }
+      </div>
+
+      <aside class="sidebar-pago">
+        <h3>Resumen de Compra</h3>
+        <div class="total-seccion">
+          <span>Total:</span>
+          <span class="monto">{{ carritoService.total() | currency:'MXN' }}</span>
+        </div>
+
+        <div class="acciones">
+          <button class="btn-xml" type="button" (click)="descargarRecibo()">Descargar XML</button>
+          <button class="btn-vaciar" type="button" (click)="carritoService.vaciar()">Vaciar Carrito</button>
+        </div>
+
+        <div class="checkout-seccion">
+          <app-checkout></app-checkout>
+        </div>
+      </aside>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,27 @@
+﻿<div class="auth-container">
+  <div class="auth-card">
+    <h2>Iniciar Sesion</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" formControlName="username" placeholder="Ingresa tu usuario">
+      </div>
+      <div class="form-group">
+        <label for="password">Contrasena</label>
+        <input type="password" id="password" formControlName="password" placeholder="Ingresa tu contrasena">
+      </div>
+
+      @if (errorMsg) {
+        <div class="error">{{ errorMsg }}</div>
+      }
+
+      <button type="submit" [disabled]="loginForm.invalid || isLoading">
+        {{ isLoading ? 'Cargando...' : 'Entrar' }}
+      </button>
+    </form>
+    <p class="switch-auth">
+      No tienes cuenta? <a routerLink="/register">Registrate aqui</a>
+    </p>
+  </div>
+</div>
+

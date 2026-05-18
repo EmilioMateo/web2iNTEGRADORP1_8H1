@@ -1,0 +1,140 @@
+﻿.carrito-pagina {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Roboto', sans-serif;
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.vacio-mensaje,
+.items-lista,
+.sidebar-pago {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vacio-mensaje {
+  text-align: center;
+  padding: 3rem;
+}
+
+.btn-seguir {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #831111 0%, #b36359 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.contenido-carrito {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+}
+
+.items-lista,
+.sidebar-pago {
+  padding: 1.5rem;
+  height: fit-content;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nombre {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.precio {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.btn-quitar {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  cursor: pointer;
+  color: #ff4d4d;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.total-seccion {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1.5rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.monto {
+  color: #00ff88;
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.btn-xml,
+.btn-vaciar {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-xml {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  color: white;
+}
+
+.btn-vaciar {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ff4d4d;
+  border: 1px solid rgba(255, 77, 77, 0.3);
+}
+
+.checkout-seccion {
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .contenido-carrito {
+    grid-template-columns: 1fr;
+  }
+}
+

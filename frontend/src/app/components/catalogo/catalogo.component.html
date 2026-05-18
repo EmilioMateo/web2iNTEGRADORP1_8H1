@@ -1,0 +1,37 @@
+﻿<header class="main-header">
+  <h1>Catalogo de Productos</h1>
+  @if (authService.user()?.rol === 'trabajador') {
+    <button class="btn-add-product" type="button" (click)="showModal.set(true)">+ Anadir Producto</button>
+  }
+</header>
+
+@if (showModal()) {
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <h2>Nuevo Producto</h2>
+      <form (submit)="createProduct($event)">
+        <input type="text" [(ngModel)]="newProduct.id" name="id" placeholder="ID (ej. prod-6)" required>
+        <input type="text" [(ngModel)]="newProduct.nombre" name="nombre" placeholder="Nombre" required>
+        <label for="precio">Precio:</label>
+        <input type="number" id="precio" [(ngModel)]="newProduct.precio" name="precio" placeholder="Precio" required>
+        <textarea [(ngModel)]="newProduct.descripcion" name="descripcion" placeholder="Descripcion" required></textarea>
+        <input type="text" [(ngModel)]="newProduct.imagenUrl" name="imagenUrl" placeholder="URL Imagen" required>
+        <input type="text" [(ngModel)]="newProduct.categoria" name="categoria" placeholder="Categoria" required>
+        <label for="enStock">Stock Inicial:</label>
+        <input type="number" id="enStock" [(ngModel)]="newProduct.enStock" name="enStock" placeholder="Stock Inicial" required>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="showModal.set(false)">Cancelar</button>
+          <button type="submit" class="btn-save" [disabled]="isSaving">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<section class="contenedor-grid">
+  @for (prod of (productos$ | async); track prod.id) {
+    <app-producto-card [item]="prod" (productChanged)="refrescarProductos()" />
+  }
+</section>
+

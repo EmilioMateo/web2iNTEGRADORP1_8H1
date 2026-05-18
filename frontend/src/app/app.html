@@ -1,0 +1,28 @@
+﻿<nav class="top-navbar">
+  <div class="nav-links">
+    <a routerLink="/introduccion" routerLinkActive="active">
+      <span class="icon">Inicio</span> Introduccion
+    </a>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <span class="icon">Tienda</span> Catalogo
+    </a>
+    <a routerLink="/carrito" routerLinkActive="active">
+      <span class="icon">Carrito</span> Carrito
+    </a>
+  </div>
+
+  <div class="auth-section">
+    @if (authService.user() !== null) {
+      @if (authService.user()?.rol === 'trabajador') {
+        <span class="worker-badge">Trabajador</span>
+      }
+      <span class="user-greeting">Hola, {{ authService.user()?.username }}</span>
+      <button type="button" (click)="logout()" class="logout-btn">Salir</button>
+    } @else {
+      <a routerLink="/login" class="login-btn">Iniciar Sesion</a>
+    }
+  </div>
+</nav>
+
+<router-outlet />
+
