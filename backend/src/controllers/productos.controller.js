@@ -1,41 +1,80 @@
-﻿const productosService = require('../services/productos.service');
+﻿const db = require('../config/db');
+const productosService = require('../services/productos.service');
 
-const getProductos = async (req, res) => {
-    try {
-        const productos = await productosService.getProductos();
-        res.json(productos);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener productos' });
-    }
+const getProductos = (req, res) => {
+    const sql = 'SELECT * FROM productos';
+
+    db.query(sql, (error, resultados) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al obtener productos' });
+        }
+
+        res.json(resultados);
+    });
 };
 
-const createProducto = async (req, res) => {
+const createProducto = (req, res) => {
+    let producto;
+
     try {
-        const producto = await productosService.createProducto(req.body);
+        producto = productosService.buildProductoForCreate(req.body);
+    } catch (error) {
+        return res.status(error.status || 500).json({ error: error.message || 'Error al crear producto' });
+    }
+
+    const sql = 'INSERT INTO productos (id, nombre, precio, descripcion, imagenUrl, categoria, enStock, idCarrito) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [
+        producto.id,
+        producto.nombre,
+        producto.precio,
+        producto.descripcion,
+        producto.imagenUrl,
+        producto.categoria,
+        producto.enStock,
+        producto.idCarrito
+    ];
+
+    db.query(sql, values, (error) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al crear producto' });
+        }
+
         res.status(201).json({ message: 'Producto creado', id: producto.id });
-    } catch (error) {
-        res.status(error.status || 500).json({ error: error.status ? error.message : 'Error al crear producto' });
-    }
+    });
 };
 
-const updateStock = async (req, res) => {
+const updateStock = (req, res) => {
+    const { id } = req.params;
+    let stock;
+
     try {
-        const { id } = req.params;
-        const { enStock } = req.body;
-        const producto = await productosService.updateStock(id, enStock);
-        res.json({ message: 'Stock actualizado', ...producto });
+        stock = productosService.validateStock(req.body.enStock);
     } catch (error) {
-        res.status(error.status || 500).json({ error: error.status ? error.message : 'Error al actualizar stock' });
+        return res.status(error.status || 500).json({ error: error.message || 'Error al actualizar stock' });
     }
+
+    const sql = 'UPDATE productos SET enStock = ? WHERE id = ?';
+
+    db.query(sql, [stock, id], (error) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al actualizar stock' });
+        }
+
+        res.json({ message: 'Stock actualizado', id, enStock: stock });
+    });
 };
 
-const deleteProducto = async (req, res) => {
-    try {
-        const producto = await productosService.deleteProducto(req.params.id);
-        res.json({ message: 'Producto eliminado', id: producto.id });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al eliminar producto' });
-    }
+const deleteProducto = (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM productos WHERE id = ?';
+
+    db.query(sql, [id], (error) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al eliminar producto' });
+        }
+
+        res.json({ message: 'Producto eliminado', id });
+    });
 };
 
 module.exports = {

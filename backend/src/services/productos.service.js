@@ -1,10 +1,9 @@
 ﻿const Producto = require('../models/producto.model');
 
-const getProductos = () => Producto.findAll();
+const requiredFields = ['id', 'nombre', 'precio', 'descripcion', 'imagenUrl', 'categoria'];
 
-const createProducto = (producto) => {
-    const requiredFields = ['id', 'nombre', 'precio', 'descripcion', 'imagenUrl', 'categoria'];
-    const missingField = requiredFields.find(field => producto[field] === undefined || producto[field] === '');
+const buildProductoForCreate = (payload) => {
+    const missingField = requiredFields.find(field => payload[field] === undefined || payload[field] === '');
 
     if (missingField) {
         const error = new Error(`Falta el campo ${missingField}`);
@@ -12,28 +11,27 @@ const createProducto = (producto) => {
         throw error;
     }
 
-    return Producto.create({
-        ...producto,
-        enStock: Number(producto.enStock || 0),
-        idCarrito: producto.idCarrito || producto.id
+    return new Producto({
+        ...payload,
+        precio: Number(payload.precio),
+        enStock: Number(payload.enStock || 0),
+        idCarrito: payload.idCarrito || payload.id
     });
 };
 
-const updateStock = (id, enStock) => {
-    if (enStock === undefined || Number(enStock) < 0) {
+const validateStock = (enStock) => {
+    const stock = Number(enStock);
+
+    if (enStock === undefined || Number.isNaN(stock) || stock < 0) {
         const error = new Error('Stock invalido');
         error.status = 400;
         throw error;
     }
 
-    return Producto.updateStock(id, Number(enStock));
+    return stock;
 };
 
-const deleteProducto = (id) => Producto.remove(id);
-
 module.exports = {
-    getProductos,
-    createProducto,
-    updateStock,
-    deleteProducto
+    buildProductoForCreate,
+    validateStock
 };
