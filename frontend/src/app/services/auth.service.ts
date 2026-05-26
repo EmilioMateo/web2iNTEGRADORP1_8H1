@@ -11,11 +11,19 @@ export class AuthService {
   private userSignal = signal<User | null>(null);
 
   constructor() {
-    this.loadUserFromStorage();
+    this.loadSessionFromStorage();
   }
 
   get user() {
     return this.userSignal;
+  }
+
+  get token(): string | null {
+    return typeof localStorage !== 'undefined' ? localStorage.getItem('token') : null;
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.token;
   }
 
   loginRequest(credentials: LoginCredentials): Observable<LoginResponse> {
@@ -26,21 +34,25 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/register`, payload);
   }
 
-  login(user: User): void {
-    this.userSignal.set(user);
+  login(session: LoginResponse): void {
+    this.userSignal.set(session.user);
+
     if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', session.token);
+      localStorage.setItem('user', JSON.stringify(session.user));
     }
   }
 
   logout(): void {
     this.userSignal.set(null);
+
     if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
   }
 
-  private loadUserFromStorage(): void {
+  private loadSessionFromStorage(): void {
     if (typeof localStorage === 'undefined') {
       return;
     }
@@ -54,9 +66,8 @@ export class AuthService {
       this.userSignal.set(JSON.parse(userData));
     } catch (error) {
       console.error('Error parsing user data', error);
-      localStorage.removeItem('user');
+      this.logout();
     }
   }
 }
-
 

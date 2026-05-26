@@ -34,7 +34,7 @@ export class LoginComponent {
 
     this.authService.loginRequest(this.loginForm.getRawValue()).subscribe({
       next: data => {
-        this.authService.login(data.user);
+        this.authService.login(data);
         this.router.navigate(['/']);
       },
       error: error => {
@@ -45,5 +45,4 @@ export class LoginComponent {
     });
   }
 }
-
 

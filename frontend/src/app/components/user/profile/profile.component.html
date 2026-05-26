@@ -1,0 +1,12 @@
+﻿<section class="profile-page">
+  <h1>Perfil</h1>
+
+  @if (profile$ | async; as profile) {
+    <div class="profile-card">
+      <p><strong>ID:</strong> {{ profile.id }}</p>
+      <p><strong>Usuario:</strong> {{ profile.username }}</p>
+      <p><strong>Rol:</strong> {{ profile.rol }}</p>
+    </div>
+  }
+</section>
+

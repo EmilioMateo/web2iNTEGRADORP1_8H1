@@ -74,3 +74,5 @@ export class ProductCardComponent implements OnInit {
   }
 }
 
+
+

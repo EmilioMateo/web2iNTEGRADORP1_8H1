@@ -1,4 +1,5 @@
 ﻿const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user.model');
 
 const validateRegisterPayload = ({ username, password }) => {
@@ -37,8 +38,19 @@ const validatePassword = async (plainPassword, hashedPassword) => {
     }
 };
 
+const generateToken = (user) => jwt.sign(
+    {
+        id: user.id,
+        username: user.username,
+        rol: user.rol
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+);
+
 const buildLoginResponse = (user) => ({
     message: 'Login exitoso',
+    token: generateToken(user),
     user: {
         id: user.id,
         username: user.username,

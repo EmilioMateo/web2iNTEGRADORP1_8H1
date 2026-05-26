@@ -1,0 +1,23 @@
+﻿.history-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+}
+
+.history-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
