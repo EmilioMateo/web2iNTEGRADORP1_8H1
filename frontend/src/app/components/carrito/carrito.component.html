@@ -1,43 +1,94 @@
-﻿<div class="carrito-pagina">
-  <h1>Tu Carrito de Compras</h1>
+<div class="carrito-pagina">
+  <h1>{{ viewState() === 'cart' ? 'Tu Carrito de Compras' : 'Resumen de Compra' }}</h1>
 
   @if (carritoService.productos().length === 0) {
     <div class="vacio-mensaje">
       <p>Tu carrito esta vacio. Agrega algunos productos.</p>
-      <a routerLink="/" class="btn-seguir">Ver Catalogo</a>
+      <a routerLink="/Catalogo" class="btn-seguir">Ver Catalogo</a>
     </div>
   } @else {
-    <div class="contenido-carrito">
-      <div class="items-lista">
-        @for (p of carritoService.productos(); track p.idCarrito) {
-          <div class="item">
-            <div class="item-info">
-              <span class="nombre">{{ p.nombre }}</span>
-              <span class="precio">{{ p.precio | currency:'MXN' }}</span>
+    
+    @if (viewState() === 'cart') {
+      <div class="contenido-carrito glass-panel">
+        <div class="items-lista">
+          @for (p of carritoService.productos(); track p.idCarrito) {
+            <div class="item">
+              <img [src]="p.imagenUrl" [alt]="p.nombre" class="item-img" />
+              <div class="item-info">
+                <span class="nombre">{{ p.nombre }}</span>
+                <span class="desc">{{ p.descripcion | slice:0:60 }}...</span>
+                <span class="precio">{{ p.precio | currency:'MXN' }}</span>
+              </div>
+              
+              <div class="cantidad-control">
+                <button type="button" class="btn-cant" (click)="carritoService.actualizarCantidad(p.idCarrito!, (p.cantidad || 1) - 1)">-</button>
+                <span class="cant-numero">{{ p.cantidad || 1 }}</span>
+                <button type="button" class="btn-cant" (click)="carritoService.actualizarCantidad(p.idCarrito!, (p.cantidad || 1) + 1)">+</button>
+              </div>
+
+              <button class="btn-quitar" type="button" (click)="carritoService.quitar(p.idCarrito)" title="Quitar">X</button>
             </div>
-            <button class="btn-quitar" type="button" (click)="carritoService.quitar(p.idCarrito)">X</button>
+          }
+        </div>
+
+        <aside class="sidebar-pago">
+          <h3>Resumen de orden</h3>
+          <div class="total-seccion">
+            <span>Subtotal:</span>
+            <span>{{ subtotal() | currency:'MXN' }}</span>
           </div>
-        }
+          <div class="total-seccion" style="font-size: 1rem; color: #aaa;">
+            <span>IVA (16%):</span>
+            <span>{{ iva() | currency:'MXN' }}</span>
+          </div>
+          <div class="total-seccion" style="border-top: none; padding-top: 0;">
+            <strong>Total:</strong>
+            <span class="monto">{{ totalConIva() | currency:'MXN' }}</span>
+          </div>
+
+          <div class="acciones">
+            <button class="btn-vaciar" type="button" (click)="carritoService.vaciar()">Vaciar Carrito</button>
+            <button class="btn-comprar" type="button" (click)="procederCompra()">Proceder a la Compra</button>
+          </div>
+        </aside>
       </div>
-
-      <aside class="sidebar-pago">
-        <h3>Resumen de Compra</h3>
-        <div class="total-seccion">
-          <span>Total:</span>
-          <span class="monto">{{ carritoService.total() | currency:'MXN' }}</span>
+    } @else {
+      <div class="contenido-checkout glass-panel">
+        <button type="button" class="btn-atras" (click)="volverAlCarrito()">← Volver al carrito</button>
+        
+        <div class="checkout-layout">
+          <div class="resumen-lista">
+            <h3>Productos a comprar:</h3>
+            <ul>
+              @for (p of carritoService.productos(); track p.idCarrito) {
+                <li>
+                  <span class="resumen-nombre">{{ p.nombre }} x{{ p.cantidad || 1 }}</span>
+                  <span class="resumen-precio">{{ p.precio * (p.cantidad || 1) | currency:'MXN' }}</span>
+                </li>
+              }
+            </ul>
+            <div class="resumen-total" style="font-size: 0.95rem; color: #aaa; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+              <span>Subtotal:</span>
+              <span>{{ subtotal() | currency:'MXN' }}</span>
+            </div>
+            <div class="resumen-total" style="font-size: 0.95rem; color: #aaa; border-top: none; padding-top: 0.5rem;">
+              <span>IVA (16%):</span>
+              <span>{{ iva() | currency:'MXN' }}</span>
+            </div>
+            <div class="resumen-total" style="border-top: none;">
+              <strong>Total a pagar:</strong>
+              <strong class="monto">{{ totalConIva() | currency:'MXN' }}</strong>
+            </div>
+          </div>
+          
+          <div class="checkout-seccion">
+            <h3>Pagar con PayPal</h3>
+            <p>Serás redirigido para completar tu pago de forma segura.</p>
+            <app-checkout></app-checkout>
+          </div>
         </div>
+      </div>
+    }
 
-        <div class="acciones">
-          <button class="btn-xml" type="button" (click)="descargarRecibo()">Descargar XML</button>
-          <button class="btn-vaciar" type="button" (click)="carritoService.vaciar()">Vaciar Carrito</button>
-        </div>
-
-        <div class="checkout-seccion">
-          <app-checkout></app-checkout>
-        </div>
-      </aside>
-    </div>
   }
 </div>
-
-

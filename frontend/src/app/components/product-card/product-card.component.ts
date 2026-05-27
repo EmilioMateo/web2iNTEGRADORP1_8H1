@@ -1,4 +1,4 @@
-﻿import { CurrencyPipe, NgClass } from '@angular/common';
+import { CurrencyPipe, NgClass } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -16,6 +16,7 @@ import { Producto } from '../../models/product.model';
 export class ProductCardComponent implements OnInit {
   @Input({ required: true }) item!: Producto;
   @Output() productChanged = new EventEmitter<void>();
+  @Output() productSelected = new EventEmitter<Producto>();
 
   private carritoService = inject(CarritoService);
   private productsService = inject(ProductsService);
@@ -35,10 +36,13 @@ export class ProductCardComponent implements OnInit {
       return;
     }
 
-    this.item.enStock--;
     this.carritoService.agregar(this.item);
     this.agregado.set(true);
     setTimeout(() => this.agregado.set(false), 2000);
+  }
+
+  verDetalle(): void {
+    this.productSelected.emit(this.item);
   }
 
   updateStock(): void {

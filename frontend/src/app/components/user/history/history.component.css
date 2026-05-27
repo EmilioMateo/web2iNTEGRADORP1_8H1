@@ -1,23 +1,126 @@
-﻿.history-page {
+.history-page {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
-  color: white;
-  font-family: 'Roboto', sans-serif;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.history-header {
+  margin-bottom: 2rem;
+}
+
+.history-header h1 {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0 0 0.5rem;
+}
+
+.subtitle {
+  color: #888;
+  margin: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
 .history-list {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
 .history-item {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  transition: border-color 0.2s, background 0.2s;
 }
 
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 77, 77, 0.3);
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.item-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.item-id {
+  font-weight: 700;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.item-date {
+  font-size: 0.82rem;
+  color: #888;
+}
+
+.item-folio {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Courier New', monospace;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.item-total {
+  font-size: 1.15rem;
+  color: #ff4d4d;
+  font-weight: 900;
+}
+
+.btn-xml {
+  background: linear-gradient(135deg, #cc0000, #ff4d4d);
+  color: white;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-xml:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.4);
+}
+
+.no-xml {
+  font-size: 0.8rem;
+  color: #555;
+  font-style: italic;
+}

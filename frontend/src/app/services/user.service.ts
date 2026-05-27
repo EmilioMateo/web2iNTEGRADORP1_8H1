@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../config/environment';
-import { OrderHistoryItem, UserProfile } from '../models/user.model';
+import { OrderHistoryItem, UpdateProfilePayload, UpdateProfileResponse, UserProfile } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -11,6 +11,10 @@ export class UserService {
 
   getProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.apiUrl}/profile`);
+  }
+
+  updateProfile(payload: UpdateProfilePayload): Observable<UpdateProfileResponse> {
+    return this.http.put<UpdateProfileResponse>(`${this.apiUrl}/profile`, payload);
   }
 
   getOrderHistory(): Observable<OrderHistoryItem[]> {

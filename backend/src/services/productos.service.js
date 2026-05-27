@@ -1,6 +1,6 @@
 ﻿const Producto = require('../models/producto.model');
 
-const requiredFields = ['id', 'nombre', 'precio', 'descripcion', 'imagenUrl', 'categoria'];
+const requiredFields = ['nombre', 'precio', 'descripcion', 'imagenUrl', 'categoria'];
 
 const buildProductoForCreate = (payload) => {
     const missingField = requiredFields.find(field => payload[field] === undefined || payload[field] === '');
@@ -14,8 +14,13 @@ const buildProductoForCreate = (payload) => {
     return new Producto({
         ...payload,
         precio: Number(payload.precio),
+        especificaciones: payload.especificaciones || '',
+        grupoMuscular: payload.grupoMuscular || '',
+        tipoEntrenamiento: payload.tipoEntrenamiento || '',
+        tamano: payload.tamano || '',
+        pesoMaximoSoportado: payload.pesoMaximoSoportado || '',
         enStock: Number(payload.enStock || 0),
-        idCarrito: payload.idCarrito || payload.id
+        idCarrito: null
     });
 };
 

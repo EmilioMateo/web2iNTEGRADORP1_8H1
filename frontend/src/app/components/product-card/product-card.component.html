@@ -1,4 +1,4 @@
-﻿<article class="tarjeta">
+<article class="tarjeta" tabindex="0" (click)="verDetalle()" (keydown.enter)="verDetalle()">
   <div class="img-container">
     <img [src]="item.imagenUrl" [alt]="item.nombre" />
     <span class="categoria-badge">{{ item.categoria }}</span>
@@ -19,7 +19,7 @@
 
     <button
       type="button"
-      (click)="alAgregar()"
+      (click)="$event.stopPropagation(); alAgregar()"
       [disabled]="item.enStock <= 0"
       [ngClass]="{ 'btn-agregado': agregado(), 'btn-agotado': item.enStock <= 0 }"
     >
@@ -32,14 +32,12 @@
       }
     </button>
 
-    @if (authService.user()?.rol === 'trabajador') {
-      <div class="worker-controls">
-        <input type="number" [(ngModel)]="newStock" min="0" placeholder="Stock">
-        <button type="button" class="save-btn" (click)="updateStock()" [disabled]="isSavingStock">Guardar</button>
-        <button type="button" class="delete-btn" (click)="deleteProduct()" [disabled]="isDeleting">Eliminar</button>
+    @if (authService.user()?.rol === 'admin') {
+      <div class="admin-controls">
+        <input type="number" [(ngModel)]="newStock" min="0" placeholder="Stock" (click)="$event.stopPropagation()">
+        <button type="button" class="save-btn" (click)="$event.stopPropagation(); updateStock()" [disabled]="isSavingStock">Guardar</button>
+        <button type="button" class="delete-btn" (click)="$event.stopPropagation(); deleteProduct()" [disabled]="isDeleting">Eliminar</button>
       </div>
     }
   </div>
 </article>
-
-

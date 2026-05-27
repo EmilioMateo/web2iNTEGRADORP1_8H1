@@ -1,12 +1,64 @@
-﻿<section class="profile-page">
+<section class="profile-page">
   <h1>Perfil</h1>
 
-  @if (profile$ | async; as profile) {
-    <div class="profile-card">
-      <p><strong>ID:</strong> {{ profile.id }}</p>
-      <p><strong>Usuario:</strong> {{ profile.username }}</p>
-      <p><strong>Rol:</strong> {{ profile.rol }}</p>
-    </div>
+  @if (profile(); as user) {
+    <form class="profile-card" (submit)="updateProfile($event)">
+      @if (errorMessage) {
+        <div class="profile-alert error">{{ errorMessage }}</div>
+      }
+
+      @if (successMessage) {
+        <div class="profile-alert success">{{ successMessage }}</div>
+      }
+
+      <div class="profile-data">
+        <p><strong>ID:</strong> {{ user.id }}</p>
+        <p><strong>Rol:</strong> {{ user.rol }}</p>
+      </div>
+
+      <label for="correo">Correo</label>
+      <input
+        id="correo"
+        name="correo"
+        type="email"
+        [(ngModel)]="correo"
+        [class.input-error]="errorMessage.includes('correo')"
+        required
+      >
+
+      <label for="currentPassword">Contrasena actual</label>
+      <input
+        id="currentPassword"
+        name="currentPassword"
+        type="password"
+        [(ngModel)]="currentPassword"
+        [class.input-error]="errorMessage.includes('actual')"
+        autocomplete="current-password"
+      >
+
+      <label for="newPassword">Nueva contrasena</label>
+      <input
+        id="newPassword"
+        name="newPassword"
+        type="password"
+        [(ngModel)]="newPassword"
+        [class.input-error]="errorMessage.includes('coinciden')"
+        autocomplete="new-password"
+      >
+
+      <label for="confirmPassword">Confirmar nueva contrasena</label>
+      <input
+        id="confirmPassword"
+        name="confirmPassword"
+        type="password"
+        [(ngModel)]="confirmPassword"
+        [class.input-error]="errorMessage.includes('coinciden')"
+        autocomplete="new-password"
+      >
+
+      <button type="submit" [disabled]="isSaving">
+        {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </form>
   }
 </section>
-

@@ -22,24 +22,27 @@ const createProducto = (req, res) => {
         return res.status(error.status || 500).json({ error: error.message || 'Error al crear producto' });
     }
 
-    const sql = 'INSERT INTO productos (id, nombre, precio, descripcion, imagenUrl, categoria, enStock, idCarrito) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO productos (nombre, precio, descripcion, imagenUrl, categoria, especificaciones, grupoMuscular, tipoEntrenamiento, tamano, pesoMaximoSoportado, enStock) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [
-        producto.id,
         producto.nombre,
         producto.precio,
         producto.descripcion,
         producto.imagenUrl,
         producto.categoria,
-        producto.enStock,
-        producto.idCarrito
+        producto.especificaciones,
+        producto.grupoMuscular,
+        producto.tipoEntrenamiento,
+        producto.tamano,
+        producto.pesoMaximoSoportado,
+        producto.enStock
     ];
 
-    db.query(sql, values, (error) => {
+    db.query(sql, values, (error, result) => {
         if (error) {
             return res.status(500).json({ error: 'Error al crear producto' });
         }
 
-        res.status(201).json({ message: 'Producto creado', id: producto.id });
+        res.status(201).json({ message: 'Producto creado', id: result.insertId });
     });
 };
 

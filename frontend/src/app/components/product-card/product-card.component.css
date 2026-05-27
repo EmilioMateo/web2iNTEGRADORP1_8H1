@@ -1,4 +1,4 @@
-﻿.tarjeta {
+.tarjeta {
   background: rgba(179, 99, 89, 0.15);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -10,6 +10,7 @@
   flex-direction: column;
   min-height: 480px;
   color: white;
+  cursor: pointer;
 }
 
 .tarjeta:hover {
@@ -50,7 +51,7 @@ img {
   flex-direction: column;
   gap: 12px;
   flex-grow: 1;
-  font-family: 'Roboto', sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 .cabecera {
@@ -79,6 +80,10 @@ h3 {
   margin: 0;
   line-height: 1.4;
   flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .stock {
@@ -134,13 +139,13 @@ button:disabled {
   color: #999 !important;
 }
 
-.worker-controls {
+.admin-controls {
   display: flex;
   gap: 10px;
   margin-top: 10px;
 }
 
-.worker-controls input {
+.admin-controls input {
   flex: 1;
   min-width: 0;
   padding: 8px;

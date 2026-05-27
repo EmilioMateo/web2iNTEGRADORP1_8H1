@@ -52,6 +52,14 @@ export class AuthService {
     }
   }
 
+  updateUser(user: User): void {
+    this.userSignal.set(user);
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+  }
+
   private loadSessionFromStorage(): void {
     if (typeof localStorage === 'undefined') {
       return;
@@ -63,9 +71,12 @@ export class AuthService {
     }
 
     try {
-      this.userSignal.set(JSON.parse(userData));
-    } catch (error) {
-      console.error('Error parsing user data', error);
+      const user = JSON.parse(userData);
+      this.userSignal.set({
+        ...user,
+        correo: user.correo || user.username
+      });
+    } catch {
       this.logout();
     }
   }

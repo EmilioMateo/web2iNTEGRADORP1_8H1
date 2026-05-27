@@ -1,6 +1,6 @@
-﻿<header class="main-header">
+<header class="main-header">
   <h1>Catalogo de Productos</h1>
-  @if (authService.user()?.rol === 'trabajador') {
+  @if (authService.user()?.rol === 'admin') {
     <button class="btn-add-product" type="button" (click)="showModal.set(true)">+ Anadir Producto</button>
   }
 </header>
@@ -10,18 +10,97 @@
     <div class="modal-content">
       <h2>Nuevo Producto</h2>
       <form (submit)="createProduct($event)">
-        <input type="text" [(ngModel)]="newProduct.id" name="id" placeholder="ID (ej. prod-6)" required>
         <input type="text" [(ngModel)]="newProduct.nombre" name="nombre" placeholder="Nombre" required>
         <label for="precio">Precio:</label>
         <input type="number" id="precio" [(ngModel)]="newProduct.precio" name="precio" placeholder="Precio" required>
         <textarea [(ngModel)]="newProduct.descripcion" name="descripcion" placeholder="Descripcion" required></textarea>
+        <textarea [(ngModel)]="newProduct.especificaciones" name="especificaciones" placeholder="Especificaciones"></textarea>
         <input type="text" [(ngModel)]="newProduct.imagenUrl" name="imagenUrl" placeholder="URL Imagen" required>
-        <input type="text" [(ngModel)]="newProduct.categoria" name="categoria" placeholder="Categoria" required>
+
+        @if (newProduct.imagenUrl) {
+          <img class="image-preview" [src]="newProduct.imagenUrl" alt="Vista previa del producto">
+        }
+
+        <label>Categoria</label>
+        <div class="selector-control">
+          <select name="categoryDraft" [(ngModel)]="categoryDraft" (change)="addSelection(productCategories, categoryDraft); categoryDraft = ''">
+            <option value="">Selecciona una categoria</option>
+            @for (categoria of categoryOptions; track categoria) {
+              <option [value]="categoria">{{ categoria }}</option>
+            }
+          </select>
+          <div class="chips-row">
+            @for (categoria of productCategories; track categoria) {
+              <button type="button" class="chip" (click)="removeSelection(productCategories, categoria)">{{ categoria }} x</button>
+            }
+          </div>
+        </div>
+
+        <label>Grupo muscular</label>
+        <div class="selector-control">
+          <select name="muscleDraft" [(ngModel)]="muscleDraft" (change)="addSelection(productMuscles, muscleDraft); muscleDraft = ''">
+            <option value="">Selecciona grupo muscular</option>
+            @for (musculo of muscleOptions; track musculo) {
+              <option [value]="musculo">{{ musculo }}</option>
+            }
+          </select>
+          <div class="chips-row">
+            @for (musculo of productMuscles; track musculo) {
+              <button type="button" class="chip" (click)="removeSelection(productMuscles, musculo)">{{ musculo }} x</button>
+            }
+          </div>
+        </div>
+
+        <label>Tipo de entrenamiento</label>
+        <div class="selector-control">
+          <select name="trainingDraft" [(ngModel)]="trainingDraft" (change)="addSelection(productTrainingTypes, trainingDraft); trainingDraft = ''">
+            <option value="">Selecciona tipo</option>
+            @for (tipo of trainingOptions; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+          <div class="chips-row">
+            @for (tipo of productTrainingTypes; track tipo) {
+              <button type="button" class="chip" (click)="removeSelection(productTrainingTypes, tipo)">{{ tipo }} x</button>
+            }
+          </div>
+        </div>
+
+        <label>Espacio / tamano</label>
+        <div class="selector-control">
+          <select name="sizeDraft" [(ngModel)]="sizeDraft" (change)="addSelection(productSizes, sizeDraft); sizeDraft = ''">
+            <option value="">Selecciona tamano</option>
+            @for (tamano of sizeOptions; track tamano) {
+              <option [value]="tamano">{{ tamano }}</option>
+            }
+          </select>
+          <div class="chips-row">
+            @for (tamano of productSizes; track tamano) {
+              <button type="button" class="chip" (click)="removeSelection(productSizes, tamano)">{{ tamano }} x</button>
+            }
+          </div>
+        </div>
+
+        <label>Peso maximo soportado</label>
+        <div class="selector-control">
+          <select name="weightDraft" [(ngModel)]="weightDraft" (change)="setSingleSelection(productWeightRanges, weightDraft); weightDraft = ''">
+            <option value="">Selecciona peso maximo</option>
+            @for (peso of weightOptions; track peso) {
+              <option [value]="peso">{{ peso }}</option>
+            }
+          </select>
+          <div class="chips-row">
+            @for (peso of productWeightRanges; track peso) {
+              <button type="button" class="chip" (click)="removeSelection(productWeightRanges, peso)">{{ peso }} x</button>
+            }
+          </div>
+        </div>
+
         <label for="enStock">Stock Inicial:</label>
         <input type="number" id="enStock" [(ngModel)]="newProduct.enStock" name="enStock" placeholder="Stock Inicial" required>
 
         <div class="modal-actions">
-          <button type="button" class="btn-cancel" (click)="showModal.set(false)">Cancelar</button>
+          <button type="button" class="btn-cancel" (click)="closeCreateModal()">Cancelar</button>
           <button type="submit" class="btn-save" [disabled]="isSaving">Guardar</button>
         </div>
       </form>
@@ -29,10 +108,145 @@
   </div>
 }
 
-<section class="contenedor-grid">
-  @for (prod of (productos$ | async); track prod.id) {
-    <app-producto-card [item]="prod" (productChanged)="refrescarProductos()" />
-  }
+<section class="catalog-layout">
+  <aside class="filters-sidebar">
+    <div class="filters-header">
+      <h2>Filtros</h2>
+      @if (hasActiveFilters) {
+        <button type="button" class="clear-btn" (click)="clearFilters()">Limpiar</button>
+      }
+    </div>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Categoria de producto</h3>
+      @for (categoria of categoryOptions; track categoria) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedCategories, categoria)" (change)="toggleOption(selectedCategories, categoria)">
+          {{ categoria }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Grupo muscular</h3>
+      @for (musculo of muscleOptions; track musculo) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedMuscles, musculo)" (change)="toggleOption(selectedMuscles, musculo)">
+          {{ musculo }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Tipo de entrenamiento</h3>
+      @for (tipo of trainingOptions; track tipo) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedTrainingTypes, tipo)" (change)="toggleOption(selectedTrainingTypes, tipo)">
+          {{ tipo }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3>Rango de precio</h3>
+      @for (rango of priceRanges; track rango.label) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedPriceRanges, rango.label)" (change)="toggleOption(selectedPriceRanges, rango.label)">
+          {{ rango.label }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Disponibilidad</h3>
+      @for (estado of availabilityOptions; track estado) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedAvailability, estado)" (change)="toggleOption(selectedAvailability, estado)">
+          {{ estado }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Espacio disponible / tamano</h3>
+      @for (tamano of sizeOptions; track tamano) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedSizes, tamano)" (change)="toggleOption(selectedSizes, tamano)">
+          {{ tamano }}
+        </label>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3><span class="filter-dot"></span> Peso maximo soportado</h3>
+      @for (peso of weightOptions; track peso) {
+        <label class="filter-check">
+          <input type="checkbox" [checked]="isSelected(selectedWeightRanges, peso)" (change)="toggleOption(selectedWeightRanges, peso)">
+          {{ peso }}
+        </label>
+      }
+    </section>
+  </aside>
+
+  <main class="catalog-content">
+    <div class="catalog-summary">
+      <span>{{ productosFiltrados.length }} productos encontrados</span>
+    </div>
+
+    <section class="contenedor-grid">
+      @for (prod of productosFiltrados; track prod.id) {
+        <app-producto-card
+          [item]="prod"
+          (productChanged)="refrescarProductos()"
+          (productSelected)="openProduct($event)"
+        />
+      } @empty {
+        <p class="empty-state">No se encontraron productos con esos filtros.</p>
+      }
+    </section>
+  </main>
 </section>
 
+@if (selectedProduct(); as producto) {
+  <div class="modal-overlay" (click)="closeProduct()">
+    <article class="product-detail" (click)="$event.stopPropagation()">
+      <button type="button" class="detail-close" (click)="closeProduct()">Cerrar</button>
+      <img [src]="producto.imagenUrl" [alt]="producto.nombre">
+      <div class="detail-content">
+        <span class="detail-category">{{ producto.categoria }}</span>
+        <h2>{{ producto.nombre }}</h2>
+        <strong class="detail-price">{{ producto.precio | currency:'MXN' }}</strong>
+        <div class="detail-tags">
+          @if (producto.grupoMuscular) {
+            <span>{{ producto.grupoMuscular }}</span>
+          }
+          @if (producto.tipoEntrenamiento) {
+            <span>{{ producto.tipoEntrenamiento }}</span>
+          }
+          @if (producto.tamano) {
+            <span>{{ producto.tamano }}</span>
+          }
+          @if (producto.pesoMaximoSoportado) {
+            <span>{{ producto.pesoMaximoSoportado }}</span>
+          }
+        </div>
+        <p>{{ producto.descripcion }}</p>
+        <section>
+          <h3>Especificaciones</h3>
+          <p>{{ producto.especificaciones || 'Sin especificaciones registradas.' }}</p>
+        </section>
+        <span [class]="producto.enStock > 0 ? 'detail-stock' : 'detail-stock agotado'">
+          {{ producto.enStock > 0 ? 'DISPONIBLE: ' + producto.enStock : 'AGOTADO' }}
+        </span>
 
+        @if (producto.enStock > 0) {
+          <div style="margin-top: 1.5rem;">
+            <button type="button" class="btn-comprar-modal" [class.agregado]="agregadoModal" (click)="alAgregarModal(producto)" [disabled]="agregadoModal">
+              {{ agregadoModal ? 'Anadido' : 'Anadir al carrito' }}
+            </button>
+          </div>
+        }
+      </div>
+    </article>
+  </div>
+}

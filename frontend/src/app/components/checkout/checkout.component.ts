@@ -1,8 +1,10 @@
-﻿import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CarritoService } from '../../services/carrito.service';
 import { PaypalService } from '../../services/paypal.service';
 import { ReceiptService } from '../../services/receipt.service';
+import { AuthService } from '../../services/auth.service';
 
 declare const paypal: any;
 
@@ -22,6 +24,8 @@ export class CheckoutComponent implements AfterViewInit {
   carrito = this.carritoService.productos;
   total = this.carritoService.total;
   mensaje = '';
+  authService = inject(AuthService);
+  private router = inject(Router);
 
   ngAfterViewInit(): void {
     this.renderPaypalButton();
@@ -49,10 +53,22 @@ export class CheckoutComponent implements AfterViewInit {
       onApprove: async (data: any) => {
         try {
           const capture = await firstValueFrom(this.paypalService.capturarOrden(data.orderID));
-          this.mensaje = 'Pago realizado correctamente.';
-          this.receiptService.descargarReciboXML(this.carrito(), this.total(), capture);
+
+          const xml = this.receiptService.generarReciboXML(this.carrito(), this.total(), capture);
+          const ordenPaypal = capture.id || data.orderID;
+
           this.carritoService.vaciar();
-          this.paypalButtonContainer.nativeElement.innerHTML = '';
+
+          const userEmail = this.authService.user()?.correo;
+          if (userEmail) {
+            this.receiptService.enviarTicketPorCorreo(xml, userEmail, ordenPaypal).subscribe({
+              error: (err) => console.error('Error enviando correo:', err)
+            });
+          }
+
+          this.router.navigate(['/ticket'], {
+            state: { xml, ordenPaypal }
+          });
         } catch (error) {
           console.error('Error al capturar el pago:', error);
           this.mensaje = 'Ocurrio un error al capturar el pago.';

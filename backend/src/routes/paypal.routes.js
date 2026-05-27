@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {captureOrder} = require('../controllers/paypal.controller');
-const {createOrder} = require('../controllers/paypal.controller');
+const paypalController = require('../controllers/paypal.controller');
+const { verifyToken } = require('../middleware/auth.middleware');
 
-router.post('/capturarOrden', captureOrder);
-router.post('/crearOrden', createOrder);
+router.post('/crearOrden', verifyToken, paypalController.createOrder);
+router.post('/capturarOrden', verifyToken, paypalController.captureOrder);
+router.post('/send-ticket', verifyToken, paypalController.sendTicket);
+
 module.exports = router;

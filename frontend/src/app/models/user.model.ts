@@ -1,16 +1,16 @@
-﻿export interface User {
+export interface User {
   id: number;
-  username: string;
-  rol: 'usuario' | 'trabajador';
+  correo: string;
+  rol: 'usuario' | 'admin';
 }
 
 export interface LoginCredentials {
-  username: string;
+  correo: string;
   password: string;
 }
 
 export interface RegisterPayload extends LoginCredentials {
-  rol: 'usuario' | 'trabajador';
+  confirmPassword: string;
 }
 
 export interface LoginResponse {
@@ -21,10 +21,23 @@ export interface LoginResponse {
 
 export interface UserProfile extends User {}
 
+export interface UpdateProfilePayload {
+  correo?: string;
+  currentPassword: string;
+  newPassword?: string;
+  confirmPassword?: string;
+}
+
+export interface UpdateProfileResponse {
+  message: string;
+  user: User;
+}
+
 export interface OrderHistoryItem {
   id: number;
   total: number;
   detalles: string;
   fecha?: string;
+  orden_paypal?: string;
+  xml_cfdi?: string;
 }
-

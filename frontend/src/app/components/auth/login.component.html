@@ -1,19 +1,47 @@
-﻿<div class="auth-container">
+<div class="auth-container">
   <div class="auth-card">
     <h2>Iniciar Sesion</h2>
+
+    @if (errorMsg) {
+      <div class="auth-message error">
+        <span class="message-icon">!</span>
+        <span>{{ errorMsg }}</span>
+      </div>
+    }
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="username">Usuario</label>
-        <input type="text" id="username" formControlName="username" placeholder="Ingresa tu usuario">
+        <label for="correo">Correo</label>
+        @if (invalidField === 'correo' || (loginForm.controls.correo.invalid && (loginForm.controls.correo.touched || submitted))) {
+          @if (loginForm.controls.correo.hasError('required')) {
+            <div class="field-error"><span class="message-icon">!</span>El correo es obligatorio.</div>
+          } @else if (loginForm.controls.correo.hasError('email') || invalidField === 'correo') {
+            <div class="field-error"><span class="message-icon">!</span>El formato del correo no es válido o las credenciales son incorrectas.</div>
+          }
+        }
+        <input
+          type="email"
+          id="correo"
+          formControlName="correo"
+          placeholder="Ingresa tu correo"
+          [class.input-error]="invalidField === 'correo' || (loginForm.controls.correo.invalid && (loginForm.controls.correo.touched || submitted))"
+        >
       </div>
       <div class="form-group">
         <label for="password">Contrasena</label>
-        <input type="password" id="password" formControlName="password" placeholder="Ingresa tu contrasena">
+        @if (invalidField === 'password' || (loginForm.controls.password.invalid && (loginForm.controls.password.touched || submitted))) {
+          @if (loginForm.controls.password.hasError('required')) {
+            <div class="field-error"><span class="message-icon">!</span>La contraseña es obligatoria.</div>
+          }
+        }
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="Ingresa tu contrasena"
+          [class.input-error]="invalidField === 'password' || (loginForm.controls.password.invalid && (loginForm.controls.password.touched || submitted))"
+        >
       </div>
-
-      @if (errorMsg) {
-        <div class="error">{{ errorMsg }}</div>
-      }
 
       <button type="submit" [disabled]="loginForm.invalid || isLoading">
         {{ isLoading ? 'Cargando...' : 'Entrar' }}
@@ -24,5 +52,3 @@
     </p>
   </div>
 </div>
-
-

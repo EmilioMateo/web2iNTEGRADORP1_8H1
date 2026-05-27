@@ -1,30 +1,85 @@
-﻿<nav class="top-navbar">
-  <div class="nav-links">
-    <a routerLink="/introduccion" routerLinkActive="active">
-      <span class="icon">Inicio</span> Introduccion
-    </a>
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-      <span class="icon">Tienda</span> Catalogo
-    </a>
-    <a routerLink="/carrito" routerLinkActive="active">
-      <span class="icon">Carrito</span> Carrito
-    </a>
-  </div>
+@if (!isAuthPage()) {
+  <nav class="top-navbar">
+    <div class="nav-links">
+      <a routerLink="/introduccion" routerLinkActive="active">
+        <span class="icon">Inicio</span> Introduccion
+      </a>
+      <a routerLink="/Catalogo" routerLinkActive="active">
+        <span class="icon">Tienda</span> Catalogo
+      </a>
+    </div>
 
-  <div class="auth-section">
-    @if (authService.user() !== null) {
-      @if (authService.user()?.rol === 'trabajador') {
-        <span class="worker-badge">Trabajador</span>
-      }
-      <a routerLink="/profile" routerLinkActive="active">Perfil</a>
-      <a routerLink="/history" routerLinkActive="active">Historial</a>
-      <span class="user-greeting">Hola, {{ authService.user()?.username }}</span>
-      <button type="button" (click)="logout()" class="logout-btn">Salir</button>
-    } @else {
-      <a routerLink="/login" class="login-btn">Iniciar Sesion</a>
+    @if (isCatalogPage()) {
+      <div class="nav-search" role="search">
+        <svg class="search-icon" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+        <input
+          type="search"
+          placeholder="Buscar..."
+          aria-label="Buscar productos"
+          [ngModel]="catalogSearch.searchTerm()"
+          (ngModelChange)="catalogSearch.setSearchTerm($event)"
+        >
+      </div>
     }
-  </div>
-</nav>
+
+    <div class="auth-section">
+      @if (authService.user() !== null) {
+        @if (getRoleLabel()) {
+          <span class="admin-badge">{{ getRoleLabel() }}</span>
+        }
+
+        <div class="user-menu-container">
+          <button class="user-profile-btn" type="button" (click)="toggleMenu()">
+            <div class="profile-avatar">
+              {{ getUserInitial() }}
+            </div>
+            <span class="user-greeting">Hola, {{ getUserName() }}</span>
+            <span class="chevron" [class.open]="isMenuOpen()">v</span>
+          </button>
+
+          @if (isMenuOpen()) {
+            <div class="dropdown-menu">
+              <div class="dropdown-header">
+                <span class="dropdown-email">{{ authService.user()?.correo }}</span>
+                @if (getRoleLabel()) {
+                  <span class="admin-badge">{{ getRoleLabel() }}</span>
+                }
+              </div>
+              <div class="dropdown-body">
+                <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">
+                  <span class="icon">Perfil</span> Perfil
+                </a>
+                <a routerLink="/history" routerLinkActive="active" (click)="closeMenu()">
+                  <span class="icon">Historial</span> Historial
+                </a>
+              </div>
+              <div class="dropdown-footer">
+                <button type="button" (click)="logout()" class="logout-menu-btn">
+                  <span class="icon">Salir</span> Cerrar Sesion
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <a routerLink="/carrito" routerLinkActive="active" class="cart-nav-btn" aria-label="Carrito" title="Carrito">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="8" cy="21" r="1" />
+            <circle cx="19" cy="21" r="1" />
+            <path d="M2 2h3l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6" />
+          </svg>
+          @if (carritoService.notificacion()) {
+            <span class="cart-notification-badge">!</span>
+          }
+        </a>
+      } @else {
+        <a routerLink="/login" class="login-btn">Iniciar Sesion</a>
+      }
+    </div>
+  </nav>
+}
 
 <router-outlet />
-

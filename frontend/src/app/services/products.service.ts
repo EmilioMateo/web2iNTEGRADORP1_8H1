@@ -13,15 +13,15 @@ export class ProductsService {
     return this.http.get<Producto[]>(this.apiUrl);
   }
 
-  crear(producto: ProductoPayload): Observable<{ message: string; id: string }> {
-    return this.http.post<{ message: string; id: string }>(this.apiUrl, producto);
+  crear(producto: ProductoPayload): Observable<{ message: string; id: number }> {
+    return this.http.post<{ message: string; id: number }>(this.apiUrl, producto);
   }
 
-  actualizarStock(id: string, enStock: number): Observable<{ message: string; id: string; enStock: number }> {
+  actualizarStock(id: number, enStock: number): Observable<{ message: string; id: string; enStock: number }> {
     return this.http.put<{ message: string; id: string; enStock: number }>(`${this.apiUrl}/${id}/stock`, { enStock });
   }
 
-  eliminar(id: string): Observable<{ message: string; id: string }> {
+  eliminar(id: number): Observable<{ message: string; id: string }> {
     return this.http.delete<{ message: string; id: string }>(`${this.apiUrl}/${id}`);
   }
 }

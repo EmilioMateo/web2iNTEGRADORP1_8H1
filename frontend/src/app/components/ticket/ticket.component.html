@@ -1,0 +1,29 @@
+<div class="ticket-page">
+  <div class="ticket-header">
+    <div class="success-icon">✓</div>
+    <h1>¡Compra Exitosa!</h1>
+    <p class="subtitle">Tu pago fue procesado correctamente por PayPal. Aquí está tu comprobante fiscal:</p>
+  </div>
+
+  <div class="ticket-card">
+    <div class="ticket-card-header">
+      <span class="cfdi-badge">CFDI 4.0 SAT</span>
+      <span class="folio">Folio: {{ ordenPaypal || 'N/A' }}</span>
+    </div>
+
+    <div class="xml-viewer">
+      <div class="xml-toolbar">
+        <span class="xml-label">📄 recibo_cfdi.xml</span>
+        <button class="btn-download" (click)="descargarXML()">
+          ↓ Descargar XML
+        </button>
+      </div>
+      <pre class="xml-code"><code [innerHTML]="xmlColoreado"></code></pre>
+    </div>
+  </div>
+
+  <div class="ticket-actions">
+    <button class="btn-secondary" (click)="irAlHistorial()">Ver mi historial</button>
+    <button class="btn-primary" (click)="irAlCatalogo()">Seguir comprando</button>
+  </div>
+</div>

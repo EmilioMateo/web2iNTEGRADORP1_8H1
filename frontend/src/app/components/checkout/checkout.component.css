@@ -1,4 +1,4 @@
-﻿.checkout-container {
+.checkout-container {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -16,6 +16,65 @@
   background: rgba(40, 167, 69, 0.2);
   color: #28a745;
   border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.ticket-container {
+  margin-top: 2rem;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.success-subtitle {
+  color: #aaa;
+  margin-bottom: 1.5rem;
+}
+
+.xml-viewer {
+  background: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  text-align: left;
+  border: 1px solid #333;
+  margin-bottom: 1.5rem;
+}
+
+.xml-viewer pre {
+  margin: 0;
+  color: #d4d4d4;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+}
+
+.email-status {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.status-success {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-error {
+  color: #ff4d4d;
+  font-weight: bold;
+}
+
+.status-loading {
+  color: #ffb3b3;
+  font-style: italic;
+}
+
+.redirect-notice {
+  margin-top: 1.5rem;
+  color: #888;
+  font-size: 0.95rem;
 }
 
 .error {
