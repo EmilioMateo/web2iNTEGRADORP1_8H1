@@ -5,6 +5,7 @@ import { CarritoService } from '../../services/carrito.service';
 import { PaypalService } from '../../services/paypal.service';
 import { ReceiptService } from '../../services/receipt.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 declare const paypal: any;
 
@@ -20,6 +21,7 @@ export class CheckoutComponent implements AfterViewInit {
   private carritoService = inject(CarritoService);
   private paypalService = inject(PaypalService);
   private receiptService = inject(ReceiptService);
+  private notifications = inject(NotificationService);
 
   carrito = this.carritoService.productos;
   total = this.carritoService.total;
@@ -52,6 +54,8 @@ export class CheckoutComponent implements AfterViewInit {
       },
       onApprove: async (data: any) => {
         try {
+          this.mensaje = 'Procesando pago...';
+          this.notifications.info('Procesando pago...');
           const capture = await firstValueFrom(this.paypalService.capturarOrden(data.orderID));
 
           const xml = this.receiptService.generarReciboXML(this.carrito(), this.total(), capture);
@@ -69,15 +73,21 @@ export class CheckoutComponent implements AfterViewInit {
           this.router.navigate(['/ticket'], {
             state: { xml, ordenPaypal }
           });
+          this.notifications.success('Compra realizada correctamente.');
         } catch (error) {
           console.error('Error al capturar el pago:', error);
           this.mensaje = 'Ocurrio un error al capturar el pago.';
+          this.notifications.error('Ocurrio un error al capturar el pago.');
         }
       },
-      onCancel: () => (this.mensaje = 'El usuario cancelo el pago.'),
+      onCancel: () => {
+        this.mensaje = 'El usuario cancelo el pago.';
+        this.notifications.info('Pago cancelado.');
+      },
       onError: (error: any) => {
         console.error('Error PayPal:', error);
         this.mensaje = 'Error en el proceso de PayPal.';
+        this.notifications.error('Error en el proceso de PayPal.');
       }
     }).render(this.paypalButtonContainer.nativeElement);
   }

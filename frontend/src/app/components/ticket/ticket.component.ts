@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { formatXmlForDownload } from '../../utils/xml-download.util';
 
 @Component({
   selector: 'app-ticket',
@@ -57,7 +58,7 @@ export class TicketComponent implements OnInit {
   }
 
   descargarXML(): void {
-    const xmlFormateado = this.ticketXml.replace(/\r?\n/g, '\r\n');
+    const xmlFormateado = formatXmlForDownload(this.ticketXml);
     
     const blob = new Blob([xmlFormateado], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);

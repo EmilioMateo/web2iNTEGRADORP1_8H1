@@ -1,0 +1,36 @@
+.legal-page {
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.legal-content {
+  background: rgba(40, 20, 20, 0.72);
+  border: 1px solid rgba(179, 99, 89, 0.25);
+  border-radius: 12px;
+  max-width: 850px;
+  padding: 2rem;
+}
+
+.legal-content > p {
+  color: #ffb3b3;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.legal-content h1 {
+  margin-top: 0.35rem;
+}
+
+.legal-content article {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 0;
+}
+
+.legal-content article p {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+}

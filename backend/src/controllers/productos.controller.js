@@ -15,9 +15,13 @@ const getProductos = (req, res) => {
 
 const createProducto = (req, res) => {
     let producto;
+    const payload = {
+        ...req.body,
+        imagenUrl: req.file ? `/uploads/${req.file.filename}` : req.body.imagenUrl
+    };
 
     try {
-        producto = productosService.buildProductoForCreate(req.body);
+        producto = productosService.buildProductoForCreate(payload);
     } catch (error) {
         return res.status(error.status || 500).json({ error: error.message || 'Error al crear producto' });
     }

@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { AuthService } from './services/auth.service';
 import { CatalogSearchService } from './services/catalog-search.service';
 import { CarritoService } from './services/carrito.service';
+import { NotificationService } from './services/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class App {
   authService = inject(AuthService);
   catalogSearch = inject(CatalogSearchService);
   carritoService = inject(CarritoService);
+  notifications = inject(NotificationService);
   private router = inject(Router);
 
   isMenuOpen = signal(false);
@@ -27,6 +29,10 @@ export class App {
 
   isCatalogPage(): boolean {
     return this.router.url.toLowerCase().startsWith('/catalogo');
+  }
+
+  isAdmin(): boolean {
+    return this.authService.user()?.rol === 'admin';
   }
 
   toggleMenu(): void {
@@ -59,6 +65,7 @@ export class App {
   logout(): void {
     this.authService.logout();
     this.closeMenu();
+    this.notifications.info('Sesion cerrada correctamente.');
     this.router.navigate(['/login']);
   }
 }

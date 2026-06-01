@@ -4,6 +4,7 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Va
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +17,7 @@ export class RegisterComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
 
   registerForm = this.fb.nonNullable.group({
@@ -138,6 +140,7 @@ export class RegisterComponent {
   acceptTerms(): void {
     this.termsAccepted = true;
     this.showTermsModal = false;
+    this.notifications.success('Terminos y condiciones aceptados.');
   }
 
   onSubmit(): void {
@@ -148,6 +151,7 @@ export class RegisterComponent {
     if (!this.termsAccepted) {
       this.showTermsModal = true;
       this.errorMsg = 'Debes leer y aceptar los terminos y condiciones para crear una cuenta.';
+      this.notifications.error(this.errorMsg);
       return;
     }
 
@@ -172,6 +176,7 @@ export class RegisterComponent {
         : this.registerForm.controls.password.invalid
           ? 'password'
           : 'confirmPassword';
+      this.notifications.error(this.errorMsg);
       return;
     }
 
@@ -186,12 +191,14 @@ export class RegisterComponent {
     ).subscribe({
       next: () => {
         this.successMsg = 'El registro ha sido exitoso redirigiendo al login...';
+        this.notifications.success('Cuenta registrada correctamente.');
         this.registerForm.disable();
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
       error: error => {
         this.isLoading = false;
-        this.errorMsg = 'Error al registrar la cuenta. Verifica que los datos sean correctos o que el correo no este en uso.';
+        this.errorMsg = this.getErrorMessage(error);
+        this.notifications.error(this.errorMsg);
         this.markServerError(this.getErrorMessage(error));
         this.cdr.detectChanges();
       }

@@ -1,6 +1,6 @@
 <article class="tarjeta" tabindex="0" (click)="verDetalle()" (keydown.enter)="verDetalle()">
   <div class="img-container">
-    <img [src]="item.imagenUrl" [alt]="item.nombre" />
+    <img [src]="imageSrc()" [alt]="item.nombre" />
     <span class="categoria-badge">{{ item.categoria }}</span>
   </div>
 

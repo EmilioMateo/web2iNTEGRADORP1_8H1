@@ -48,8 +48,10 @@
         @if (invalidField === 'correo' || (registerForm.controls.correo.invalid && (registerForm.controls.correo.touched || submitted))) {
           @if (registerForm.controls.correo.hasError('required')) {
             <div class="field-error"><span class="message-icon">!</span>El correo es obligatorio.</div>
-          } @else if (registerForm.controls.correo.hasError('email') || invalidField === 'correo') {
-            <div class="field-error"><span class="message-icon">!</span>El formato del correo no es valido o ya esta en uso.</div>
+          } @else if (registerForm.controls.correo.hasError('email')) {
+            <div class="field-error"><span class="message-icon">!</span>El formato del correo no es valido.</div>
+          } @else if (registerForm.controls.correo.hasError('server') || invalidField === 'correo') {
+            <div class="field-error"><span class="message-icon">!</span>El correo ya esta en uso.</div>
           }
         }
         <input

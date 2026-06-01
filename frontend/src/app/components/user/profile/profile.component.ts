@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,6 +15,7 @@ import { UserService } from '../../../services/user.service';
 export class ProfileComponent {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
 
   profile = signal(this.authService.user());
   correo = this.authService.user()?.correo || '';
@@ -32,6 +34,7 @@ export class ProfileComponent {
       },
       error: () => {
         this.errorMessage = 'No se pudo cargar tu perfil.';
+        this.notifications.error(this.errorMessage);
       }
     });
   }
@@ -81,9 +84,11 @@ export class ProfileComponent {
         this.newPassword = '';
         this.confirmPassword = '';
         this.successMessage = response.message;
+        this.notifications.success(response.message);
       },
       error: (error) => {
         this.errorMessage = error.error?.error || 'No se pudo actualizar el perfil.';
+        this.notifications.error(this.errorMessage);
       },
       complete: () => {
         this.isSaving = false;

@@ -13,7 +13,7 @@ export class ProductsService {
     return this.http.get<Producto[]>(this.apiUrl);
   }
 
-  crear(producto: ProductoPayload): Observable<{ message: string; id: number }> {
+  crear(producto: ProductoPayload | FormData): Observable<{ message: string; id: number }> {
     return this.http.post<{ message: string; id: number }>(this.apiUrl, producto);
   }
 

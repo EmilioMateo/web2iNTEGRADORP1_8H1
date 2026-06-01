@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
   private cdr = inject(ChangeDetectorRef);
 
   loginForm = this.fb.nonNullable.group({
@@ -63,6 +65,7 @@ export class LoginComponent {
       }
       this.loginForm.markAllAsTouched();
       this.invalidField = this.loginForm.controls.correo.invalid ? 'correo' : 'password';
+      this.notifications.error(this.errorMsg);
       return;
     }
 
@@ -77,11 +80,13 @@ export class LoginComponent {
     ).subscribe({
       next: data => {
         this.authService.login(data);
-        this.router.navigate(['/Catalogo']);
+        this.notifications.success('Inicio de sesion exitoso.');
+        this.router.navigate([data.user.rol === 'admin' ? '/inventario' : '/Catalogo']);
       },
       error: error => {
         this.isLoading = false;
-        this.errorMsg = 'Error al iniciar sesión. Usuario, correo o contraseña incorrectos.';
+        this.errorMsg = this.getErrorMessage(error);
+        this.notifications.error(this.errorMsg);
         this.markServerError(this.getErrorMessage(error));
         this.cdr.detectChanges();
       }

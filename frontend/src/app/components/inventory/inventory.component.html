@@ -1,0 +1,128 @@
+<header class="inventory-header">
+  <div>
+    <p>Administrador</p>
+    <h1>Inventario</h1>
+  </div>
+  <button type="button" class="primary-btn" (click)="showModal.set(true)">Anadir producto</button>
+</header>
+
+<div class="tabs">
+  <button type="button" [class.active]="activeTab() === 'productos'" (click)="activeTab.set('productos')">Productos</button>
+  <button type="button" [class.active]="activeTab() === 'cuentas'" (click)="activeTab.set('cuentas')">Cuentas</button>
+</div>
+
+@if (activeTab() === 'productos') {
+  <section class="panel">
+    @if (isLoadingProducts()) {
+      <div class="loading"><span></span>Cargando inventario...</div>
+    } @else {
+      <div class="inventory-grid">
+        @for (producto of productos(); track producto.id) {
+          <article class="inventory-card">
+            <img [src]="imageSrc(producto)" [alt]="producto.nombre">
+            <div class="card-body">
+              <h2>{{ producto.nombre }}</h2>
+              <p>{{ producto.descripcion }}</p>
+              <strong>{{ producto.precio | currency:'MXN' }}</strong>
+              <label>
+                Stock
+                <input #stockInput type="number" min="0" [value]="producto.enStock">
+              </label>
+              <div class="actions">
+                <button type="button" (click)="updateStock(producto, stockInput.value)">Guardar stock</button>
+                <button type="button" class="danger" (click)="deleteProduct(producto)">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <p class="empty-state">No hay productos registrados.</p>
+        }
+      </div>
+    }
+  </section>
+}
+
+@if (activeTab() === 'cuentas') {
+  <section class="panel">
+    @if (isLoadingAccounts()) {
+      <div class="loading"><span></span>Cargando cuentas...</div>
+    } @else {
+      <div class="accounts-list">
+        @for (account of accounts(); track account.id) {
+          <article class="account-row">
+            <div>
+              <strong>{{ account.correo }}</strong>
+              <span>{{ account.rol }}</span>
+            </div>
+            <button type="button" class="danger" (click)="deleteAccount(account)" [disabled]="account.rol === 'admin'">
+              Eliminar cuenta
+            </button>
+          </article>
+        } @empty {
+          <p class="empty-state">No hay cuentas registradas.</p>
+        }
+      </div>
+    }
+  </section>
+}
+
+@if (showModal()) {
+  <div class="modal-overlay">
+    <section class="modal-content">
+      <h2>Nuevo producto</h2>
+      <form (submit)="createProduct($event)">
+        <input type="text" [(ngModel)]="newProduct.nombre" name="nombre" placeholder="Nombre" required>
+        <label for="precio">Precio</label>
+        <input id="precio" type="number" [(ngModel)]="newProduct.precio" name="precio" placeholder="Precio en MXN" min="1" required>
+        <textarea [(ngModel)]="newProduct.descripcion" name="descripcion" placeholder="Descripcion" required></textarea>
+        <textarea [(ngModel)]="newProduct.especificaciones" name="especificaciones" placeholder="Especificaciones"></textarea>
+
+        <label>Imagen JPG o PNG</label>
+        <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" (change)="onImageSelected($event)" required>
+        @if (imagePreview) {
+          <img class="image-preview" [src]="imagePreview" alt="Vista previa del producto">
+        }
+
+        <select [(ngModel)]="newProduct.categoria" name="categoria" required>
+          <option value="">Selecciona categoria</option>
+          @for (categoria of categoryOptions; track categoria) {
+            <option [value]="categoria">{{ categoria }}</option>
+          }
+        </select>
+        <select [(ngModel)]="newProduct.grupoMuscular" name="grupoMuscular">
+          <option value="">Grupo muscular</option>
+          @for (musculo of muscleOptions; track musculo) {
+            <option [value]="musculo">{{ musculo }}</option>
+          }
+        </select>
+        <select [(ngModel)]="newProduct.tipoEntrenamiento" name="tipoEntrenamiento">
+          <option value="">Tipo de entrenamiento</option>
+          @for (tipo of trainingOptions; track tipo) {
+            <option [value]="tipo">{{ tipo }}</option>
+          }
+        </select>
+        <select [(ngModel)]="newProduct.tamano" name="tamano">
+          <option value="">Tamano</option>
+          @for (tamano of sizeOptions; track tamano) {
+            <option [value]="tamano">{{ tamano }}</option>
+          }
+        </select>
+        <select [(ngModel)]="newProduct.pesoMaximoSoportado" name="pesoMaximoSoportado">
+          <option value="">Peso maximo soportado</option>
+          @for (peso of weightOptions; track peso) {
+            <option [value]="peso">{{ peso }}</option>
+          }
+        </select>
+        <label for="enStock">Stock inicial</label>
+        <input id="enStock" type="number" [(ngModel)]="newProduct.enStock" name="enStock" placeholder="Cantidad disponible" min="0" required>
+
+        <div class="modal-actions">
+          <button type="button" class="secondary-btn" (click)="closeCreateModal()">Cancelar</button>
+          <button type="submit" class="primary-btn" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : 'Guardar producto' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}

@@ -1,12 +1,18 @@
 @if (!isAuthPage()) {
   <nav class="top-navbar">
     <div class="nav-links">
-      <a routerLink="/introduccion" routerLinkActive="active">
-        <span class="icon">Inicio</span> Introduccion
-      </a>
-      <a routerLink="/Catalogo" routerLinkActive="active">
-        <span class="icon">Tienda</span> Catalogo
-      </a>
+      @if (isAdmin()) {
+        <a routerLink="/inventario" routerLinkActive="active">
+          <span class="icon">Admin</span> Inventario
+        </a>
+      } @else {
+        <a routerLink="/introduccion" routerLinkActive="active">
+          <span class="icon">Inicio</span> Introduccion
+        </a>
+        <a routerLink="/Catalogo" routerLinkActive="active">
+          <span class="icon">Tienda</span> Catalogo
+        </a>
+      }
     </div>
 
     @if (isCatalogPage()) {
@@ -49,11 +55,19 @@
                 }
               </div>
               <div class="dropdown-body">
-                <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">
-                  <span class="icon">Perfil</span> Perfil
+                @if (!isAdmin()) {
+                  <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">
+                    <span class="icon">Perfil</span> Perfil
+                  </a>
+                  <a routerLink="/history" routerLinkActive="active" (click)="closeMenu()">
+                    <span class="icon">Historial</span> Historial
+                  </a>
+                }
+                <a routerLink="/aviso-privacidad" routerLinkActive="active" (click)="closeMenu()">
+                  <span class="icon">Privacidad</span> Aviso de privacidad
                 </a>
-                <a routerLink="/history" routerLinkActive="active" (click)="closeMenu()">
-                  <span class="icon">Historial</span> Historial
+                <a routerLink="/terminos-condiciones" routerLinkActive="active" (click)="closeMenu()">
+                  <span class="icon">Legal</span> Terminos y condiciones
                 </a>
               </div>
               <div class="dropdown-footer">
@@ -65,16 +79,18 @@
           }
         </div>
 
-        <a routerLink="/carrito" routerLinkActive="active" class="cart-nav-btn" aria-label="Carrito" title="Carrito">
-          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="8" cy="21" r="1" />
-            <circle cx="19" cy="21" r="1" />
-            <path d="M2 2h3l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6" />
-          </svg>
-          @if (carritoService.notificacion()) {
-            <span class="cart-notification-badge">!</span>
-          }
-        </a>
+        @if (!isAdmin()) {
+          <a routerLink="/carrito" routerLinkActive="active" class="cart-nav-btn" aria-label="Carrito" title="Carrito">
+            <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="8" cy="21" r="1" />
+              <circle cx="19" cy="21" r="1" />
+              <path d="M2 2h3l2.4 12.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6" />
+            </svg>
+            @if (carritoService.notificacion()) {
+              <span class="cart-notification-badge">!</span>
+            }
+          </a>
+        }
       } @else {
         <a routerLink="/login" class="login-btn">Iniciar Sesion</a>
       }
@@ -83,3 +99,9 @@
 }
 
 <router-outlet />
+
+@if (notifications.notification(); as notification) {
+  <div class="toast" [class.success]="notification.type === 'success'" [class.error]="notification.type === 'error'" [class.info]="notification.type === 'info'">
+    {{ notification.message }}
+  </div>
+}

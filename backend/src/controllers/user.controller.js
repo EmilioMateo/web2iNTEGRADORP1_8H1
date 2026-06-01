@@ -29,6 +29,64 @@ const getOrderHistory = (req, res) => {
     });
 };
 
+const getAccounts = (req, res) => {
+    const sql = 'SELECT id, username AS correo, rol FROM usuarios ORDER BY id DESC';
+
+    db.query(sql, (error, results) => {
+        if (error) {
+            return res.status(500).json({ error: 'Error al obtener cuentas' });
+        }
+
+        res.json(results);
+    });
+};
+
+const deleteAccount = (req, res) => {
+    const accountId = Number(req.params.id);
+
+    if (!accountId) {
+        return res.status(400).json({ error: 'El id de la cuenta es obligatorio' });
+    }
+
+    if (accountId === req.user.id) {
+        return res.status(400).json({ error: 'No puedes eliminar tu propia cuenta de administrador' });
+    }
+
+    const findSql = 'SELECT id, username AS correo FROM usuarios WHERE id = ?';
+
+    db.query(findSql, [accountId], (findError, users) => {
+        if (findError) {
+            return res.status(500).json({ error: 'Error en la base de datos' });
+        }
+
+        if (users.length === 0) {
+            return res.status(404).json({ error: 'Cuenta no encontrada' });
+        }
+
+        const user = users[0];
+
+        db.query('DELETE FROM carrito WHERE usernameUsuario = ?', [user.correo], (cartError) => {
+            if (cartError) {
+                return res.status(500).json({ error: 'No se pudo limpiar el carrito de la cuenta' });
+            }
+
+            db.query('UPDATE registro_compras SET id_usuario = NULL WHERE id_usuario = ?', [accountId], (historyError) => {
+                if (historyError) {
+                    return res.status(500).json({ error: 'No se pudo actualizar el historial de la cuenta' });
+                }
+
+                db.query('DELETE FROM usuarios WHERE id = ?', [accountId], (deleteError) => {
+                    if (deleteError) {
+                        return res.status(500).json({ error: 'Error al eliminar la cuenta' });
+                    }
+
+                    res.json({ message: 'Cuenta eliminada correctamente', id: accountId });
+                });
+            });
+        });
+    });
+};
+
 const updateProfile = (req, res) => {
     try {
         userService.validateProfileUpdatePayload(req.body);
@@ -120,5 +178,7 @@ const buildProfileResponse = (currentUser, correo) => ({
 module.exports = {
     getProfile,
     getOrderHistory,
-    updateProfile
+    updateProfile,
+    getAccounts,
+    deleteAccount
 };

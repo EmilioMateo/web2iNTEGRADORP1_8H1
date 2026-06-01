@@ -7,6 +7,7 @@ import { ProductsService } from '../../services/products.service';
 import { Producto, ProductoPayload } from '../../models/product.model';
 import { ProductCardComponent } from '../product-card/product-card.component';
 import { CarritoService } from '../../services/carrito.service';
+import { environment } from '../../config/environment';
 
 @Component({
   selector: 'app-catalogo',
@@ -18,6 +19,7 @@ import { CarritoService } from '../../services/carrito.service';
 export class CatalogoComponent {
   private productsService = inject(ProductsService);
   private catalogSearch = inject(CatalogSearchService);
+  private apiBaseUrl = environment.apiUrl.replace('/api', '');
   authService = inject(AuthService);
   carritoService = inject(CarritoService);
 
@@ -25,6 +27,7 @@ export class CatalogoComponent {
   showModal = signal(false);
   selectedProduct = signal<Producto | null>(null);
   isSaving = false;
+  isLoading = false;
   agregadoModal = false;
 
   alAgregarModal(producto: Producto): void {
@@ -112,6 +115,10 @@ export class CatalogoComponent {
     const term = this.catalogSearch.searchTerm().trim().toLowerCase();
 
     return this.productos().filter(producto => {
+      if (producto.enStock <= 0) {
+        return false;
+      }
+
       const precio = Number(producto.precio);
       const matchesName = !term || producto.nombre.toLowerCase().includes(term);
       const matchesCategory = this.matchesList(this.selectedCategories, producto.categoria);
@@ -167,7 +174,21 @@ export class CatalogoComponent {
   }
 
   refrescarProductos(): void {
-    this.productsService.obtenerTodos().subscribe(productos => this.productos.set(productos));
+    this.isLoading = true;
+    this.productsService.obtenerTodos().subscribe({
+      next: productos => this.productos.set(productos),
+      complete: () => (this.isLoading = false)
+    });
+  }
+
+  imageSrc(producto: Producto): string {
+    if (!producto.imagenUrl) {
+      return '';
+    }
+
+    return producto.imagenUrl.startsWith('/uploads')
+      ? `${this.apiBaseUrl}${producto.imagenUrl}`
+      : producto.imagenUrl;
   }
 
   clearFilters(): void {

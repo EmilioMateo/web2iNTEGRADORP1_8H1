@@ -21,6 +21,8 @@ export interface LoginResponse {
 
 export interface UserProfile extends User {}
 
+export interface AccountUser extends User {}
+
 export interface UpdateProfilePayload {
   correo?: string;
   currentPassword: string;

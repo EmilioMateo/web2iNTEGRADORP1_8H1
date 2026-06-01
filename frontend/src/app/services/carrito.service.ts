@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../config/environment';
 import { Producto } from '../models/product.model';
 import { AuthService } from './auth.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
   private apiUrl = `${environment.apiUrl}/carrito`;
 
   private productosSignal = signal<Producto[]>([]);
@@ -35,7 +37,7 @@ export class CarritoService {
   agregar(producto: Producto): void {
     const user = this.authService.user();
     if (!user) {
-      alert('Debes iniciar sesión para agregar al carrito');
+      this.notifications.error('Debes iniciar sesion para agregar al carrito.');
       return;
     }
 
@@ -61,8 +63,9 @@ export class CarritoService {
           this.productosSignal.update(lista => [...lista, itemCarrito]);
         }
         this.mostrarNotificacion();
+        this.notifications.success('Producto agregado al carrito.');
       },
-      error: (err) => alert('Error agregando producto al carrito')
+      error: (err) => this.notifications.error(err.error?.error || 'Error agregando producto al carrito.')
     });
   }
 
@@ -74,8 +77,9 @@ export class CarritoService {
         this.productosSignal.update(lista => {
           return lista.map(p => p.idCarrito === idCarrito ? { ...p, cantidad: nuevaCantidad } : p);
         });
+        this.notifications.success('Cantidad actualizada correctamente.');
       },
-      error: () => alert('Error al actualizar cantidad')
+      error: () => this.notifications.error('Error al actualizar cantidad.')
     });
   }
 
@@ -91,8 +95,9 @@ export class CarritoService {
     this.http.delete(`${this.apiUrl}/${idCarrito}`).subscribe({
       next: () => {
         this.productosSignal.update(lista => lista.filter(p => p.idCarrito !== idCarrito));
+        this.notifications.success('Producto eliminado del carrito.');
       },
-      error: () => alert('Error quitando producto del carrito')
+      error: () => this.notifications.error('Error quitando producto del carrito.')
     });
   }
 
@@ -101,8 +106,11 @@ export class CarritoService {
     if (!user) return;
 
     this.http.delete(`${this.apiUrl}/clear/${user.correo}`).subscribe({
-      next: () => this.productosSignal.set([]),
-      error: () => alert('Error vaciando el carrito')
+      next: () => {
+        this.productosSignal.set([]);
+        this.notifications.success('Carrito vaciado correctamente.');
+      },
+      error: () => this.notifications.error('Error vaciando el carrito.')
     });
   }
 

@@ -2,6 +2,7 @@ import { AsyncPipe, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { UserService } from '../../../services/user.service';
 import { OrderHistoryItem } from '../../../models/user.model';
+import { formatXmlForDownload } from '../../../utils/xml-download.util';
 
 @Component({
   selector: 'app-history',
@@ -17,7 +18,7 @@ export class HistoryComponent {
   descargarXml(item: OrderHistoryItem): void {
     if (!item.xml_cfdi) return;
 
-    const xmlFormateado = item.xml_cfdi.replace(/\r?\n/g, '\r\n');
+    const xmlFormateado = formatXmlForDownload(item.xml_cfdi);
 
     const blob = new Blob([xmlFormateado], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);

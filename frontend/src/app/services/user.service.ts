@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../config/environment';
-import { OrderHistoryItem, UpdateProfilePayload, UpdateProfileResponse, UserProfile } from '../models/user.model';
+import { AccountUser, OrderHistoryItem, UpdateProfilePayload, UpdateProfileResponse, UserProfile } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -19,6 +19,14 @@ export class UserService {
 
   getOrderHistory(): Observable<OrderHistoryItem[]> {
     return this.http.get<OrderHistoryItem[]>(`${this.apiUrl}/history`);
+  }
+
+  getAccounts(): Observable<AccountUser[]> {
+    return this.http.get<AccountUser[]>(`${this.apiUrl}/admin/accounts`);
+  }
+
+  deleteAccount(id: number): Observable<{ message: string; id: number }> {
+    return this.http.delete<{ message: string; id: number }>(`${this.apiUrl}/admin/accounts/${id}`);
   }
 }
 

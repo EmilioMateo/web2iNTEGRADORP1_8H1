@@ -4,13 +4,14 @@ import { Producto } from '../models/product.model';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../config/environment';
+import { formatXmlForDownload } from '../utils/xml-download.util';
 
 @Injectable({ providedIn: 'root' })
 export class ReceiptService {
   private http = inject(HttpClient);
 
   descargarReciboXML(productos: Producto[], total: number, paypalData?: any): void {
-    const xml = this.crearReciboXML(productos, total, paypalData);
+    const xml = formatXmlForDownload(this.crearReciboXML(productos, total, paypalData));
     const blob = new Blob([xml], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -123,6 +124,7 @@ export class ReceiptService {
 
 </cfdi:Comprobante>`;
   }
+
 }
 
 
