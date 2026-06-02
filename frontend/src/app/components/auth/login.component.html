@@ -47,8 +47,117 @@
         {{ isLoading ? 'Cargando...' : 'Entrar' }}
       </button>
     </form>
+    <button type="button" class="link-button" (click)="openForgotPassword()">
+      Recuperar contrasena
+    </button>
     <p class="switch-auth">
       No tienes cuenta? <a routerLink="/register">Registrate aqui</a>
     </p>
   </div>
+
+  @if (showForgotPasswordModal) {
+    <div class="terms-overlay" role="dialog" aria-modal="true" aria-labelledby="recover-title">
+      <section class="terms-modal recover-modal">
+        <div class="terms-header">
+          <p class="terms-kicker">Acceso a tu cuenta</p>
+          <h2 id="recover-title">Recuperar contrasena</h2>
+        </div>
+
+        <div class="recover-content">
+          @if (resetErrorMsg) {
+            <div class="auth-message error">
+              <span class="message-icon">!</span>
+              <span>{{ resetErrorMsg }}</span>
+            </div>
+          }
+
+          @if (resetSuccessMsg) {
+            <div class="auth-message success">
+              <span class="message-icon">!</span>
+              <span>{{ resetSuccessMsg }}</span>
+            </div>
+          }
+
+          @if (resetStep === 'email') {
+            <form [formGroup]="forgotPasswordForm" (ngSubmit)="requestResetCode()">
+              <div class="form-group">
+                <label for="recoverCorreo">Correo</label>
+                @if (forgotPasswordForm.controls.correo.invalid && forgotPasswordForm.controls.correo.touched) {
+                  @if (forgotPasswordForm.controls.correo.hasError('required')) {
+                    <div class="field-error"><span class="message-icon">!</span>El correo es obligatorio.</div>
+                  } @else if (forgotPasswordForm.controls.correo.hasError('email')) {
+                    <div class="field-error"><span class="message-icon">!</span>El formato del correo no es valido.</div>
+                  }
+                }
+                <input
+                  type="email"
+                  id="recoverCorreo"
+                  formControlName="correo"
+                  placeholder="Ingresa el correo de tu cuenta"
+                >
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="secondary-button" (click)="closeForgotPassword()">Cancelar</button>
+                <button type="submit" [disabled]="isSendingCode">
+                  {{ isSendingCode ? 'Enviando...' : 'Enviar codigo' }}
+                </button>
+              </div>
+            </form>
+          } @else {
+            <form [formGroup]="resetPasswordForm" (ngSubmit)="resetPassword()">
+              <p class="recover-help">Enviamos un codigo de 6 digitos a {{ recoveryEmail }}.</p>
+
+              <div class="form-group">
+                <label for="resetCode">Codigo</label>
+                @if (resetPasswordForm.controls.code.invalid && resetPasswordForm.controls.code.touched) {
+                  <div class="field-error"><span class="message-icon">!</span>El codigo debe tener 6 digitos.</div>
+                }
+                <input
+                  type="text"
+                  id="resetCode"
+                  formControlName="code"
+                  maxlength="6"
+                  placeholder="000000"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword">Nueva contrasena</label>
+                @if (resetPasswordForm.controls.password.invalid && resetPasswordForm.controls.password.touched) {
+                  <div class="field-error"><span class="message-icon">!</span>La nueva contrasena es obligatoria.</div>
+                }
+                <input
+                  type="password"
+                  id="newPassword"
+                  formControlName="password"
+                  placeholder="Nueva contrasena"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="confirmNewPassword">Confirmar contrasena</label>
+                @if (resetPasswordForm.controls.confirmPassword.invalid && resetPasswordForm.controls.confirmPassword.touched) {
+                  <div class="field-error"><span class="message-icon">!</span>Confirma la nueva contrasena.</div>
+                }
+                <input
+                  type="password"
+                  id="confirmNewPassword"
+                  formControlName="confirmPassword"
+                  placeholder="Confirma la nueva contrasena"
+                >
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" class="secondary-button" (click)="closeForgotPassword()">Cancelar</button>
+                <button type="submit" [disabled]="isResettingPassword">
+                  {{ isResettingPassword ? 'Guardando...' : 'Cambiar contrasena' }}
+                </button>
+              </div>
+            </form>
+          }
+        </div>
+      </section>
+    </div>
+  }
 </div>

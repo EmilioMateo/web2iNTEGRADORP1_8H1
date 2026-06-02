@@ -74,6 +74,46 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.link-button {
+  background: transparent;
+  color: #ffb3b3;
+  margin-top: 0.75rem;
+  padding: 0.4rem;
+  text-decoration: underline;
+}
+
+.link-button:hover {
+  color: white;
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.recover-modal {
+  width: min(520px, 94vw);
+}
+
+.recover-content {
+  padding: 1.25rem 1.6rem 1.5rem;
+}
+
+.recover-help {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.45;
+  margin: 0 0 1rem;
+}
+
+.modal-actions {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.modal-actions button {
+  margin-top: 0;
+}
+
 .auth-message {
   align-items: center;
   display: flex;

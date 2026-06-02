@@ -13,6 +13,17 @@ export interface RegisterPayload extends LoginCredentials {
   confirmPassword: string;
 }
 
+export interface ForgotPasswordPayload {
+  correo: string;
+}
+
+export interface ResetPasswordPayload {
+  correo: string;
+  code: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface LoginResponse {
   message: string;
   token: string;

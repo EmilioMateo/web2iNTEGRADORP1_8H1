@@ -25,8 +25,25 @@ export class LoginComponent {
     password: ['', Validators.required]
   });
 
+  forgotPasswordForm = this.fb.nonNullable.group({
+    correo: ['', [Validators.required, Validators.email]]
+  });
+
+  resetPasswordForm = this.fb.nonNullable.group({
+    code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+    password: ['', Validators.required],
+    confirmPassword: ['', Validators.required]
+  });
+
   isLoading = false;
+  isSendingCode = false;
+  isResettingPassword = false;
+  showForgotPasswordModal = false;
+  resetStep: 'email' | 'code' = 'email';
+  recoveryEmail = '';
   errorMsg = '';
+  resetErrorMsg = '';
+  resetSuccessMsg = '';
   submitted = false;
   invalidField: 'correo' | 'password' | null = null;
 
@@ -89,6 +106,105 @@ export class LoginComponent {
         this.notifications.error(this.errorMsg);
         this.markServerError(this.getErrorMessage(error));
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  openForgotPassword(): void {
+    this.showForgotPasswordModal = true;
+    this.resetStep = 'email';
+    this.recoveryEmail = '';
+    this.resetErrorMsg = '';
+    this.resetSuccessMsg = '';
+    this.forgotPasswordForm.reset();
+    this.resetPasswordForm.reset();
+  }
+
+  closeForgotPassword(): void {
+    this.showForgotPasswordModal = false;
+    this.resetErrorMsg = '';
+    this.resetSuccessMsg = '';
+  }
+
+  requestResetCode(): void {
+    this.resetErrorMsg = '';
+    this.resetSuccessMsg = '';
+
+    if (this.forgotPasswordForm.invalid) {
+      this.forgotPasswordForm.markAllAsTouched();
+      this.resetErrorMsg = this.forgotPasswordForm.controls.correo.hasError('email')
+        ? 'El formato del correo no es valido.'
+        : 'Ingresa el correo de tu cuenta.';
+      this.notifications.error(this.resetErrorMsg);
+      return;
+    }
+
+    this.isSendingCode = true;
+    const payload = this.forgotPasswordForm.getRawValue();
+
+    this.authService.forgotPasswordRequest(payload).pipe(
+      finalize(() => {
+        this.isSendingCode = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: response => {
+        this.recoveryEmail = payload.correo;
+        this.resetStep = 'code';
+        this.resetSuccessMsg = response.message;
+        this.notifications.success(response.message);
+      },
+      error: error => {
+        this.resetErrorMsg = this.getErrorMessage(error);
+        this.notifications.error(this.resetErrorMsg);
+      }
+    });
+  }
+
+  resetPassword(): void {
+    this.resetErrorMsg = '';
+    this.resetSuccessMsg = '';
+
+    if (this.resetPasswordForm.invalid) {
+      this.resetPasswordForm.markAllAsTouched();
+      if (this.resetPasswordForm.controls.code.hasError('pattern')) {
+        this.resetErrorMsg = 'El codigo debe tener 6 digitos.';
+      } else {
+        this.resetErrorMsg = 'Completa el codigo y la nueva contrasena.';
+      }
+      this.notifications.error(this.resetErrorMsg);
+      return;
+    }
+
+    const values = this.resetPasswordForm.getRawValue();
+
+    if (values.password !== values.confirmPassword) {
+      this.resetErrorMsg = 'Las contrasenas no coinciden.';
+      this.notifications.error(this.resetErrorMsg);
+      return;
+    }
+
+    this.isResettingPassword = true;
+
+    this.authService.resetPasswordRequest({
+      correo: this.recoveryEmail,
+      code: values.code,
+      password: values.password,
+      confirmPassword: values.confirmPassword
+    }).pipe(
+      finalize(() => {
+        this.isResettingPassword = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: response => {
+        this.resetSuccessMsg = response.message;
+        this.notifications.success(response.message);
+        this.closeForgotPassword();
+      },
+      error: error => {
+        this.resetErrorMsg = this.getErrorMessage(error);
+        this.notifications.error(this.resetErrorMsg);
       }
     });
   }

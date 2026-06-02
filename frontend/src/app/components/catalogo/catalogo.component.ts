@@ -201,9 +201,6 @@ export class CatalogoComponent {
     this.selectedWeightRanges = [];
   }
 
-  applyFilters(): void {
-  }
-
   addSelection(list: string[], value: string): void {
     if (value && !list.includes(value)) {
       list.push(value);
